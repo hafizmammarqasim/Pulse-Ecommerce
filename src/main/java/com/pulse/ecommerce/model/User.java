@@ -1,0 +1,8 @@
+package com.pulse.ecommerce.model;
+
+import jakarta.persistence.Entity;
+
+@Entity
+public class User {
+
+}
