@@ -9,12 +9,21 @@ public class Address {
     private Long addressId;
 
     @Column(nullable = false)
+    private String fName;
+
+    private String lName;
+
+    @Column(nullable = false)
     private String addressLine1;  //HouseNumber or StreetNumber
-    private String landMark ;   //Landmark
+
+    private String landMark ;
+
     @Column(nullable = false)
     private String area;
+
     @Column(nullable = false)
     private String city;
+
     @Column(nullable = false)
     private int postalCode;
 
@@ -22,14 +31,18 @@ public class Address {
 
     private Boolean isDefault;
 
+    private String phoneNumber;
+
     @ManyToOne
     @JoinColumn(name = "userId")
-    private User user;
+    private UserRecord userRecord;
 
     public Address() {
     }
 
-    public Address(String addressLine1, Long addressId, String landMark, String area, String city, int postalCode, String country, Boolean isDefault, User user) {
+    public Address(String fName, String lName, String addressLine1, Long addressId, String landMark, String area, String city, int postalCode, String country, Boolean isDefault, UserRecord userRecord) {
+        this.fName = fName;
+        this.lName = lName;
         this.addressLine1 = addressLine1;
         this.addressId = addressId;
         this.landMark = landMark;
@@ -38,7 +51,7 @@ public class Address {
         this.postalCode = postalCode;
         this.country = country;
         this.isDefault = isDefault;
-        this.user = user;
+        this.userRecord = userRecord;
     }
 
     public Long getAddressId() {
@@ -105,11 +118,27 @@ public class Address {
         isDefault = aDefault;
     }
 
-    public User getUser() {
-        return user;
+    public String getfName() {
+        return fName;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setfName(String fName) {
+        this.fName = fName;
+    }
+
+    public String getlName() {
+        return lName;
+    }
+
+    public void setlName(String lName) {
+        this.lName = lName;
+    }
+
+    public UserRecord getUserRecord() {
+        return userRecord;
+    }
+
+    public void setUserRecord(UserRecord userRecord) {
+        this.userRecord = userRecord;
     }
 }

@@ -3,29 +3,30 @@ package com.pulse.ecommerce.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
-public class User {
+@Table (name = "users")  //User is a reserved keyword in mySql
+public class UserRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     private String fName;
     private String lName;
+    @Column(unique = true, nullable = false)
     private String email;
-    private int phoneNumber;
+    @Column(unique = true, nullable = false)
+    private String phoneNumber;
+    private String password;
     private String role;
     private LocalDate registrationDate;
     private LocalDate last_loginDate;
 
-    @OneToMany(mappedBy = "userId")
-    private List<Address> addressList;
 
-    public User(){
+    public UserRecord(){
 
     }
 
-    public User(String fName, String lName, String email, int phoneNumber, Long userId, String role, LocalDate registrationDate, LocalDate last_loginDate, List<Address> addressList) {
+    public UserRecord(String fName, String lName, String email, String phoneNumber, Long userId, String role, LocalDate registrationDate, LocalDate last_loginDate) {
         this.fName = fName;
         this.lName = lName;
         this.email = email;
@@ -34,7 +35,6 @@ public class User {
         this.role = role;
         this.registrationDate = registrationDate;
         this.last_loginDate = last_loginDate;
-        this.addressList = addressList;
     }
 
     public Long getUserId() {
@@ -69,11 +69,19 @@ public class User {
         this.email = email;
     }
 
-    public int getPhoneNumber() {
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -101,11 +109,4 @@ public class User {
         this.last_loginDate = last_loginDate;
     }
 
-    public List<Address> getAddressList() {
-        return addressList;
-    }
-
-    public void setAddressList(List<Address> addressList) {
-        this.addressList = addressList;
-    }
 }

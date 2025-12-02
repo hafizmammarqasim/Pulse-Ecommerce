@@ -1,6 +1,6 @@
 package com.pulse.ecommerce.controller;
 
-import com.pulse.ecommerce.model.User;
+import com.pulse.ecommerce.model.UserRecord;
 import com.pulse.ecommerce.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,23 +25,24 @@ public class AuthController {
     //What is the purpose of this login when we have specified it in the requestMatchers?
     @GetMapping("/login")
     public String getLogin(){
-        return "/login";
+        return "login";
     }
 
     @PostMapping("/login")
-    public void verifyLogin(@ModelAttribute("user") User user){
+    public void verifyLogin(@ModelAttribute("user") UserRecord userRecord){
 
     }
 
     @GetMapping("/register")
     public String registerUser(Model model){
-        User user = new User();
-        model.addAttribute("user",user);
+        UserRecord userRecord = new UserRecord();
+        model.addAttribute("user", userRecord);
         return "register";
     }
 
-    public void callRegisterUser(@ModelAttribute("user") User user){
-        authService.registerUser(user);
+    @PostMapping("/register")
+    public void callRegisterUser(@ModelAttribute("user") UserRecord userRecord){
+        authService.registerUser(userRecord);
     }
 
     @GetMapping("/")
