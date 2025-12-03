@@ -132,11 +132,17 @@
 </head>
 <body>
 
+
 <div class="register-container">
 
     <div class="header-section">
         <span class="brand-name">Pulse.</span>
         <p>Create your account to get started</p>
+    </div>
+
+    <div th:if="${message}"
+         style="background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center;">
+        <span th:text="${message}"></span>
     </div>
 
     <!-- FORM START -->

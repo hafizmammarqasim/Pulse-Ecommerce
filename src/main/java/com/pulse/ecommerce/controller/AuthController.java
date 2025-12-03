@@ -1,5 +1,6 @@
 package com.pulse.ecommerce.controller;
 
+import com.pulse.ecommerce.model.Role;
 import com.pulse.ecommerce.model.UserRecord;
 import com.pulse.ecommerce.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,21 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public void callRegisterUser(@ModelAttribute("user") UserRecord userRecord){
+    public String callRegisterUser(@ModelAttribute("user") UserRecord userRecord, Model model){
+        String email = userRecord.getEmail();
+        String phoneNumber = userRecord.getPhoneNumber();
+
+        if(authService.emailExist(email)){
+            model.addAttribute("message","Error: Email is already Registered");
+            return "register";
+        }
+        if(authService.phoneNumberExists(phoneNumber)){
+            model.addAttribute("message","Error: Phone Number is already Registered");
+            return "register";
+        }
+        userRecord.setRole(String.valueOf(Role.CUSTOMER));
         authService.registerUser(userRecord);
+        return "redirect:/login?registrationSuccess";
     }
 
     @GetMapping("/")
