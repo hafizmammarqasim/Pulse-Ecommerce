@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Pulse</title>
+  <style>
+    /* 1. RESET & BASE STYLES */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5; /* Soft gray background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Full screen height */
+    }
+
+    /* 2. THE CARD CONTAINER */
+    .login-container {
+        background-color: white;
+        padding: 2.5rem; /* 40px */
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Soft shadow */
+        width: 100%;
+        max-width: 400px; /* Won't get too wide */
+    }
+
+    /* 3. TYPOGRAPHY */
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .brand-name {
+        color: #6c63ff; /* Pulse Brand Color (Modern Purple/Blue) */
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -1px;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .login-header p {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* 4. FORM ELEMENTS */
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        outline: none;
+    }
+
+    /* Glow effect on focus */
+    input:focus {
+        border-color: #6c63ff;
+        box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+    }
+
+    /* 5. BUTTON */
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #6c63ff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background-color: #5a52d5;
+    }
+
+    button:active {
+        transform: scale(0.98); /* Tiny press effect */
+    }
+
+    /* 6. MESSAGES (Error & Logout) */
+    .alert {
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .alert-error {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+    }
+
+    .alert-logout {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+    }
+
+    .footer-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .footer-link a {
+        color: #6c63ff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .footer-link a:hover {
+        text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+
+  <div class="login-header">
+    <span class="brand-name">Pulse.</span>
+    <p>Welcome back! Please login to continue.</p>
+  </div>
+
+  <!-- ERROR MESSAGE BLOCK -->
+  <!-- Spring sends 'error' param if login fails -->
+  <div th:if="${param.error}" class="alert alert-error">
+    Invalid username or password.
+  </div>
+
+  <!-- LOGOUT MESSAGE BLOCK -->
+  <div th:if="${param.logout}" class="alert alert-logout">
+    You have been logged out.
+  </div>
+
+  <div th:if="${param.registrationSuccess}" class="alert alert-logout">
+    Account Created Successfully
+  </div>
+
+  <form th:action="@{/login}" method="post">
+
+    <div class="form-group">
+      <input type="text" name="username" placeholder="Email or Phone Number" required autofocus>
+    </div>
+
+    <div class="form-group">
+      <input type="password" name="password" placeholder="Password" required>
+    </div>
+
+    <button type="submit">Sign In</button>
+  </form>
+
+  <div class="footer-link">
+    Don't have an account? <a href="/register">Sign up</a>
+  </div>
+</div>
+
+</body>
+</html>
