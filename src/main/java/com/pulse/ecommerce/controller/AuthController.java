@@ -58,9 +58,4 @@ public class AuthController {
         authService.registerUser(userRecord);
         return "redirect:/login?registrationSuccess";
     }
-
-    @GetMapping("/")
-    public String home(){
-        return "home";
-    }
 }

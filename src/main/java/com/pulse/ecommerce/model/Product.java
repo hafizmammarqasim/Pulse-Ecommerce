@@ -29,6 +29,8 @@ public class Product {
     private boolean bestSeller=false; // for “Hot / Best Seller” badge
 
 
+
+
     public String getLabel() {
         return label;
     }
