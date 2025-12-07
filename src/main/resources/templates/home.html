@@ -1,10 +1,217 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Home</title>
+  <title>Pulse | Home</title>
+  <style>
+    /* --- BRAND COLORS --- */
+    :root {
+        --brand-black: #000000;
+        --brand-red: #cc0000; /* Deep, professional red */
+        --bg-light: #f4f4f4;  /* Light gray background for readability */
+        --card-white: #ffffff;
+        --text-dark: #333333;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+    }
+
+    /* --- THE BLACK BAR (Header) --- */
+    header {
+        background-color: var(--brand-black);
+        color: white;
+        padding: 20px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 4px solid var(--brand-red); /* The "Pulse" line */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .logo {
+        font-size: 2em;
+        font-weight: 900;
+        letter-spacing: 1px;
+        color: white;
+        text-transform: uppercase;
+    }
+
+    .logo span {
+        color: var(--brand-red); /* Makes the word PULSE or part of it red */
+    }
+
+    /* --- LAYOUT --- */
+    .container {
+        padding: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .category-title {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        padding-left: 15px;
+        border-left: 5px solid var(--brand-black); /* Black accent line */
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .category-section {
+        margin-bottom: 60px;
+    }
+
+    .product-grid {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+    }
+
+    /* --- CARD DESIGN --- */
+    .product-card {
+        background-color: var(--card-white);
+        border: none;
+        width: 200px;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        border-bottom: 3px solid var(--brand-red); /* Subtle red glow on hover */
+    }
+
+    .product-name {
+        font-size: 1em;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0 0 10px 0;
+        line-height: 1.4;
+    }
+
+    .product-price {
+        color: var(--brand-red);
+        font-size: 1.2em;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    /* Fake Button to make it look clickable */
+    .view-btn {
+        background-color: var(--brand-black);
+        color: white;
+        text-align: center;
+        padding: 8px;
+        font-size: 0.9em;
+        border-radius: 2px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .empty-msg {
+        color: #777;
+        font-style: italic;
+    }
+
+  </style>
 </head>
 <body>
-  <label>Hello Home!</label>
+
+<!-- THE BLACK BAR -->
+<header>
+  <div class="logo">PULSE<span>.</span></div>
+  <!-- Placeholder for Nav Links later -->
+  <div style="font-size: 0.9em; color: #ccc;">(Navbar Placeholder)</div>
+</header>
+
+<div class="container">
+
+  <!-- 1. EARBUDS -->
+  <div class="category-section">
+    <div class="category-title">Earbuds</div>
+    <div class="product-grid">
+      <div class="product-card" th:each="product : ${earbudsList}">
+        <div>
+          <p class="product-name" th:text="${product.name}">Product Name</p>
+          <p class="product-price" th:text="'Rs. ' + ${product.price}">0.00</p>
+        </div>
+        <a href="#" class="view-btn">View Details</a>
+      </div>
+      <p class="empty-msg" th:if="${#lists.isEmpty(earbudsList)}">No Earbuds available.</p>
+    </div>
+  </div>
+
+  <!-- 2. HEADPHONES -->
+  <div class="category-section">
+    <div class="category-title">Headphones</div>
+    <div class="product-grid">
+      <div class="product-card" th:each="product : ${headPhonesList}">
+        <div>
+          <p class="product-name" th:text="${product.name}">Product Name</p>
+          <p class="product-price" th:text="'Rs. ' + ${product.price}">0.00</p>
+        </div>
+        <a href="#" class="view-btn">View Details</a>
+      </div>
+      <p class="empty-msg" th:if="${#lists.isEmpty(headPhonesList)}">No Headphones available.</p>
+    </div>
+  </div>
+
+  <!-- 3. SPEAKERS -->
+  <div class="category-section">
+    <div class="category-title">Speakers</div>
+    <div class="product-grid">
+      <div class="product-card" th:each="product : ${speakersList}">
+        <div>
+          <p class="product-name" th:text="${product.name}">Product Name</p>
+          <p class="product-price" th:text="'Rs. ' + ${product.price}">0.00</p>
+        </div>
+        <a href="#" class="view-btn">View Details</a>
+      </div>
+      <p class="empty-msg" th:if="${#lists.isEmpty(speakersList)}">No Speakers available.</p>
+    </div>
+  </div>
+
+  <!-- 4. WATCHES -->
+  <div class="category-section">
+    <div class="category-title">Smart Watches</div>
+    <div class="product-grid">
+      <div class="product-card" th:each="product : ${watchList}">
+        <div>
+          <p class="product-name" th:text="${product.name}">Product Name</p>
+          <p class="product-price" th:text="'Rs. ' + ${product.price}">0.00</p>
+        </div>
+        <a href="#" class="view-btn">View Details</a>
+      </div>
+      <p class="empty-msg" th:if="${#lists.isEmpty(watchList)}">No Watches available.</p>
+    </div>
+  </div>
+
+  <!-- 5. POWER BANKS -->
+  <div class="category-section">
+    <div class="category-title">Power Banks</div>
+    <div class="product-grid">
+      <div class="product-card" th:each="product : ${powerBankList}">
+        <div>
+          <p class="product-name" th:text="${product.name}">Product Name</p>
+          <p class="product-price" th:text="'Rs. ' + ${product.price}">0.00</p>
+        </div>
+        <a href="#" class="view-btn">View Details</a>
+      </div>
+      <p class="empty-msg" th:if="${#lists.isEmpty(powerBankList)}">No Power Banks available.</p>
+    </div>
+  </div>
+
+</div>
+
 </body>
 </html>
