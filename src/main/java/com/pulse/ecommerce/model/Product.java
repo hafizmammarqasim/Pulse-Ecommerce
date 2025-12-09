@@ -5,6 +5,7 @@ package com.pulse.ecommerce.model;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -28,8 +29,21 @@ public class Product {
 
     private boolean bestSeller=false; // for “Hot / Best Seller” badge
 
+    //It is just for hibernate when it add the data back to this class,
+    //Tells hibernate, here the data from another table would be added
+    //To fill that data back, look for "product"
+    //Product variable is joined by productId column, get appropriate data of product variant
+    //and fill this product List back
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariant> variants;
 
+    public List<ProductVariant> getVariants() {
+        return variants;
+    }
 
+    public void setVariants(List<ProductVariant> variants) {
+        this.variants = variants;
+    }
 
     public String getLabel() {
         return label;

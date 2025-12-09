@@ -1,8 +1,7 @@
 package com.pulse.ecommerce.model;
-
-
-
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "product_variants")
@@ -19,6 +18,7 @@ public class ProductVariant {
     private String color;
     private String variantType; // BLACK, wireless/wired etc.
     private Integer stockQuantity;
+//  private BigDecimal price;
 
     // getters/setters
 
@@ -61,4 +61,12 @@ public class ProductVariant {
     public void setStockQuantity(Integer stockQuantity) {
         this.stockQuantity = stockQuantity;
     }
+
+//    public BigDecimal getPrice() {
+//        return price;
+//    }
+//
+//    public void setPrice(BigDecimal price) {
+//        this.price = price;
+//    }
 }

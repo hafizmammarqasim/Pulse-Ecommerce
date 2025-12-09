@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name} + ' | Pulse'"></title>
+    <style>
+        /* --- PULSE THEME VARIABLES --- */
+        :root {
+            --bg-black: #121212;
+            --bg-dark: #1e1e1e;
+            --bg-card: #252525;
+            --brand-red: #cc0000;
+            --text-white: #ffffff;
+            --text-gray: #b3b3b3;
+            --border-color: #333;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- LAYOUT --- */
+        .main-container {
+            display: flex;
+            gap: 50px;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            align-items: flex-start;
+        }
+
+        /* --- LEFT SIDE (Image + Variants) --- */
+        .left-column {
+            flex: 1;
+            position: sticky;
+            top: 20px;
+        }
+
+        .image-wrapper {
+            background-color: var(--bg-dark);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px; /* Space between Image and Variants */
+        }
+
+        .product-img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        /* --- VARIANT SELECTOR (Now on Left) --- */
+        .variant-section {
+            padding: 20px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .variant-title {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .variant-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="radio"] { display: none; }
+
+        .variant-label {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            min-width: 80px;
+            color: var(--text-white);
+            font-size: 0.95rem;
+        }
+
+        .variant-label:hover {
+            border-color: var(--text-gray);
+        }
+
+        input[type="radio"]:checked + .variant-label {
+            background-color: var(--brand-red);
+            border-color: var(--brand-red);
+            color: white;
+            box-shadow: 0 0 10px rgba(204, 0, 0, 0.3);
+        }
+
+        /* --- RIGHT SIDE (Info + Button) --- */
+        .info-wrapper {
+            flex: 1;
+        }
+
+        .category-tag {
+            color: var(--brand-red);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            line-height: 1.1;
+        }
+
+        .price {
+            font-size: 2rem;
+            color: var(--brand-red);
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .tech-specs-title {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .short-specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .spec-box {
+            background-color: var(--bg-card);
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid var(--brand-red);
+        }
+
+        .spec-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .spec-val {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-white);
+        }
+
+        /* --- ADD TO CART BUTTON (Refined) --- */
+        .btn-add {
+            width: 100%;
+            background-color: var(--text-white);
+            color: var(--bg-black);
+            padding: 15px;
+            font-weight: 700; /* Less bold than before */
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-add:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        /* --- BOTTOM SECTION --- */
+        .details-container {
+            max-width: 1200px;
+            margin: 0 auto 100px auto;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .details-header {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: var(--text-white);
+            margin-bottom: 40px;
+            border-left: 6px solid var(--brand-red);
+            padding-left: 15px;
+            text-transform: uppercase;
+        }
+
+        .full-specs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .full-specs-table tr { border-bottom: 1px solid #333; }
+        .full-specs-table th { text-align: left; padding: 20px; color: var(--text-gray); width: 30%; text-transform: uppercase; font-size: 0.9rem; }
+        .full-specs-table td { padding: 20px; color: var(--text-white); font-size: 1.1rem; }
+
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="main-container">
+
+    <!-- FORM START: Wraps both columns so Button can submit selected Variant -->
+    <form action="/cart/add" method="post" style="display: flex; gap: 50px; width: 100%;">
+
+        <input type="hidden" name="productId" th:value="${product.id}">
+
+        <!-- LEFT COLUMN: IMAGE + VARIANTS -->
+        <div class="left-column">
+            <!-- Image -->
+            <div class="image-wrapper">
+                <img th:src="@{/images/tempImage.avif}" class="product-img" alt="Product Image">
+            </div>
+
+            <!-- Variant Section (Moved Here) -->
+            <div class="variant-section" th:if="${not #lists.isEmpty(product.variants)}">
+                <span class="variant-title">Select Color</span>
+                <div class="variant-options">
+                    <div th:each="variant, iterStat : ${product.variants}">
+                        <input type="radio" name="variantId"
+                               th:value="${variant.id}"
+                               th:id="'var-'+${variant.id}"
+                               th:checked="${iterStat.index == 0}">
+
+                        <label th:for="'var-'+${variant.id}" class="variant-label">
+                            <span th:text="${variant.color}">Color</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: INFO + SPECS + BUTTON -->
+        <div class="info-wrapper">
+            <span class="category-tag" th:text="${product.category != null ? product.category.name : 'Tech'}">Category</span>
+            <h1 th:text="${product.name}">Product Name</h1>
+            <div class="price" th:text="'Rs. ' + ${product.price}">0.00</div>
+
+            <div class="tech-specs-title">Key Specifications</div>
+
+            <!-- SHORT SPECS GRID -->
+
+            <!-- A. EARBUDS GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.EarBudProduct)}" class="short-specs-grid">
+                <div class="spec-box"><span class="spec-label">Driver Size</span><span class="spec-val" th:text="${product.driverSizeMm} + ' mm'"></span></div>
+                <div class="spec-box"><span class="spec-label">Bluetooth</span><span class="spec-val" th:text="${product.bluetoothVersion}"></span></div>
+                <div class="spec-box"><span class="spec-label">Noise Cancellation</span><span class="spec-val" th:text="${product.noiseCancellation}"></span></div>
+                <div class="spec-box"><span class="spec-label">Battery</span><span class="spec-val" th:text="${product.batteryLifeCaseHours} + ' Hours'"></span></div>
+                <div class="spec-box"><span class="spec-label">Latency</span><span class="spec-val" th:text="${product.lowLatencyMode} ? 'Gaming Mode' : 'Standard'"></span></div>
+                <div class="spec-box"><span class="spec-label">Water Resistance</span><span class="spec-val" th:text="${product.waterResistanceRating}"></span></div>
+            </div>
+
+            <!-- B. WATCHES GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.WatchProduct)}" class="short-specs-grid">
+                <div class="spec-box"><span class="spec-label">Display</span><span class="spec-val" th:text="${product.displaySizeInch} + ' inch'"></span></div>
+                <div class="spec-box"><span class="spec-label">Type</span><span class="spec-val" th:text="${product.displayType}"></span></div>
+                <div class="spec-box"><span class="spec-label">Battery</span><span class="spec-val" th:text="${product.batteryLifeDays} + ' Days'"></span></div>
+                <div class="spec-box"><span class="spec-label">Waterproof</span><span class="spec-val" th:text="${product.waterResistanceRating}"></span></div>
+                <div class="spec-box"><span class="spec-label">Calling</span><span class="spec-val">Bluetooth Calling</span></div>
+                <div class="spec-box"><span class="spec-label">Sports Modes</span><span class="spec-val" th:text="${product.sportsModesCount} + '+'"></span></div>
+            </div>
+
+            <!-- C. HEADPHONES GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.HeadPhoneProduct)}" class="short-specs-grid">
+                <div class="spec-box"><span class="spec-label">Type</span><span class="spec-val" th:text="${product.wireless} ? 'Wireless' : 'Wired'"></span></div>
+                <div class="spec-box"><span class="spec-label">Battery</span><span class="spec-val" th:text="${product.batteryLifeHours} + ' Hours'"></span></div>
+                <div class="spec-box"><span class="spec-label">Driver</span><span class="spec-val" th:text="${product.driverSizeMm} + ' mm'"></span></div>
+                <div class="spec-box"><span class="spec-label">Noise Cancellation</span><span class="spec-val" th:text="${product.noiseCancellation}"></span></div>
+                <div class="spec-box"><span class="spec-label">Mic</span><span class="spec-val" th:text="${product.mic} ? 'Yes' : 'No'"></span></div>
+                <div class="spec-box"><span class="spec-label">Aux Input</span><span class="spec-val" th:text="${product.audioInput} != null ? 'Yes' : 'No'"></span></div>
+            </div>
+
+            <!-- D. SPEAKERS GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.SpeakerProduct)}" class="short-specs-grid">
+                <div class="spec-box"><span class="spec-label">Output</span><span class="spec-val" th:text="${product.outputPowerWatt} + ' Watts'"></span></div>
+                <div class="spec-box"><span class="spec-label">Playtime</span><span class="spec-val" th:text="${product.batteryLifeHours} + ' Hours'"></span></div>
+                <div class="spec-box"><span class="spec-label">Waterproof</span><span class="spec-val" th:text="${product.waterResistanceRating}"></span></div>
+                <div class="spec-box"><span class="spec-label">TWS Mode</span><span class="spec-val" th:text="${product.stereoPairingSupport} ? 'Supported' : 'No'"></span></div>
+                <div class="spec-box"><span class="spec-label">Bluetooth</span><span class="spec-val" th:text="${product.bluetoothVersion}"></span></div>
+            </div>
+
+            <!-- E. POWER BANKS GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.PowerBankProduct)}" class="short-specs-grid">
+                <div class="spec-box"><span class="spec-label">Capacity</span><span class="spec-val" th:text="${product.capacityMah} + ' mAh'"></span></div>
+                <div class="spec-box"><span class="spec-label">Max Output</span><span class="spec-val" th:text="${product.maxOutputWatt} + 'W'"></span></div>
+                <div class="spec-box"><span class="spec-label">Fast Charge</span><span class="spec-val" th:text="${product.fastChargingSupport} ? 'PD/QC 3.0' : 'No'"></span></div>
+                <div class="spec-box"><span class="spec-label">Ports</span><span class="spec-val" th:text="${product.inputPort}"></span></div>
+                <div class="spec-box"><span class="spec-label">Battery</span><span class="spec-val" th:text="${product.batteryType}"></span></div>
+            </div>
+
+            <!-- THE BUTTON (Visible Immediately) -->
+            <button type="submit" class="btn-add">Add to Cart</button>
+        </div>
+    </form>
+</div>
+
+<!-- BOTTOM SECTION: FULL DETAILED SPECIFICATIONS -->
+<div class="details-container">
+    <h3 class="details-header">Comprehensive Details</h3>
+
+    <!-- A. EARBUDS FULL TABLE -->
+    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.EarBudProduct)}">
+        <tr><th>Driver Size</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
+        <tr><th>Frequency Response</th><td th:text="${product.frequencyResponse}"></td></tr>
+        <tr><th>Bluetooth Version</th><td th:text="${product.bluetoothVersion}"></td></tr>
+        <tr><th>Microphone</th><td th:text="${product.mic} ? 'Yes' : 'No'"></td></tr>
+        <tr><th>Active Noise Cancellation</th><td th:text="${product.noiseCancellation}"></td></tr>
+        <tr><th>Battery (Earbuds)</th><td th:text="${product.batteryLifeEarbudsHours} + ' Hours'"></td></tr>
+        <tr><th>Battery (Charging Case)</th><td th:text="${product.batteryLifeCaseHours} + ' Hours'"></td></tr>
+        <tr><th>Charging Time</th><td th:text="${product.chargingTimeHours} + ' Hours'"></td></tr>
+        <tr><th>Charging Interface</th><td th:text="${product.chargingPort}"></td></tr>
+        <tr><th>Water Resistance</th><td th:text="${product.waterResistanceRating}"></td></tr>
+        <tr><th>Low Latency (Gaming)</th><td th:text="${product.lowLatencyMode} ? 'Supported' : 'No'"></td></tr>
+        <tr><th>Dimensions (Size)</th><td th:text="${product.sizeMm} + ' mm'"></td></tr>
+        <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+    </table>
+
+    <!-- B. HEADPHONES FULL TABLE -->
+    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.HeadPhoneProduct)}">
+        <tr><th>Driver Size</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
+        <tr><th>Connectivity</th><td th:text="${product.wireless} ? 'Wireless' : 'Wired'"></td></tr>
+        <tr><th>Frequency Response</th><td th:text="${product.frequencyResponse}"></td></tr>
+        <tr><th>Impedance</th><td th:text="${product.impedanceOhm} + ' Ohm'"></td></tr>
+        <tr><th>Bluetooth Version</th><td th:text="${product.bluetoothVersion}"></td></tr>
+        <tr><th>Active Noise Cancellation</th><td th:text="${product.noiseCancellation}"></td></tr>
+        <tr><th>Microphone</th><td th:text="${product.mic} ? 'Built-in' : 'No'"></td></tr>
+        <tr><th>Battery Life</th><td th:text="${product.batteryLifeHours} + ' Hours'"></td></tr>
+        <tr><th>Charging Port</th><td th:text="${product.chargingPort}"></td></tr>
+        <tr><th>Audio Input</th><td th:text="${product.audioInput}"></td></tr>
+        <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+        <tr><th>Size</th><td th:text="${product.sizeMm} + ' mm'"></td></tr>
+    </table>
+
+    <!-- C. SPEAKERS FULL TABLE -->
+    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.SpeakerProduct)}">
+        <tr><th>Output Power (RMS)</th><td th:text="${product.outputPowerWatt} + ' Watts'"></td></tr>
+        <tr><th>Driver Unit</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
+        <tr><th>Frequency Response</th><td th:text="${product.frequencyResponse}"></td></tr>
+        <tr><th>Bluetooth Version</th><td th:text="${product.bluetoothVersion}"></td></tr>
+        <tr><th>Playtime</th><td th:text="${product.batteryLifeHours} + ' Hours'"></td></tr>
+        <tr><th>Charging Port</th><td th:text="${product.chargingPort}"></td></tr>
+        <tr><th>Water Resistance</th><td th:text="${product.waterResistanceRating}"></td></tr>
+        <tr><th>TWS Stereo Pairing</th><td th:text="${product.stereoPairingSupport} ? 'Supported' : 'No'"></td></tr>
+        <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+        <tr><th>Size</th><td th:text="${product.sizeMm} + ' mm'"></td></tr>
+    </table>
+
+    <!-- D. WATCHES FULL TABLE -->
+    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.WatchProduct)}">
+        <tr><th>Display Type</th><td th:text="${product.displayType}"></td></tr>
+        <tr><th>Display Size</th><td th:text="${product.displaySizeInch} + ' inches'"></td></tr>
+        <tr><th>Screen Resolution</th><td th:text="${product.resolution}"></td></tr>
+        <tr><th>Battery Capacity</th><td th:text="${product.batteryCapacityMah} + ' mAh'"></td></tr>
+        <tr><th>Battery Life</th><td th:text="${product.batteryLifeDays} + ' Days'"></td></tr>
+        <tr><th>Water Resistance</th><td th:text="${product.waterResistanceRating}"></td></tr>
+        <tr><th>Heart Rate Sensor</th><td th:text="${product.heartRateSensor} ? 'Yes' : 'No'"></td></tr>
+        <tr><th>SpO2 (Blood Oxygen)</th><td th:text="${product.spo2Sensor} ? 'Yes' : 'No'"></td></tr>
+        <tr><th>Sports Modes</th><td th:text="${product.sportsModesCount}"></td></tr>
+        <tr><th>GPS</th><td th:text="${product.gps} ? 'Built-in GPS' : 'Connected GPS'"></td></tr>
+        <tr><th>OS Compatibility</th><td th:text="${product.osCompatibility}"></td></tr>
+        <tr><th>Strap Material</th><td th:text="${product.strapMaterial}"></td></tr>
+        <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+    </table>
+
+    <!-- E. POWER BANKS FULL TABLE -->
+    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.PowerBankProduct)}">
+        <tr><th>Capacity</th><td th:text="${product.capacityMah} + ' mAh'"></td></tr>
+        <tr><th>Max Output Power</th><td th:text="${product.maxOutputWatt} + ' Watts'"></td></tr>
+        <tr><th>Input Ports</th><td th:text="${product.inputPort}"></td></tr>
+        <tr><th>Fast Charging Protocol</th><td th:text="${product.fastChargingSupport} ? 'PD & QC 3.0' : 'Standard'"></td></tr>
+        <tr><th>Battery Type</th><td th:text="${product.batteryType}"></td></tr>
+        <tr><th>Recharge Time</th><td th:text="${product.chargingTimeHours} + ' Hours'"></td></tr>
+        <tr><th>Dimensions</th><td th:text="${product.dimensions}"></td></tr>
+        <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+    </table>
+
+</div>
+
+</body>
+</html>

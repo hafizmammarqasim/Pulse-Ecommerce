@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name} + ' | Pulse'"></title>
+    <style>
+        /* --- PULSE RED/BLACK THEME --- */
+        :root {
+            --primary-black: #121212;
+            --secondary-black: #1e1e1e;
+            --primary-red: #cc0000;
+            --text-white: #ffffff;
+            --text-gray: #b3b3b3;
+            --border-color: #333;
+        }
+
+        body {
+            background-color: var(--primary-black);
+            color: var(--text-white);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container Split */
+        .container {
+            display: flex;
+            gap: 40px;
+            max-width: 1100px;
+            margin: 40px auto;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        /* Image Placeholder Section */
+        .image-section {
+            flex: 1;
+            background-color: var(--secondary-black);
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-gray);
+            font-size: 1.2em;
+        }
+
+        /* Details Section */
+        .details-section {
+            flex: 1;
+        }
+
+        /* Typography */
+        h1 {
+            color: var(--text-white);
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+        }
+
+        .category-badge {
+            background-color: var(--primary-red);
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8em;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 2em;
+            color: var(--primary-red);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Specs Table Styling */
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: var(--secondary-black);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .specs-table th {
+            text-align: left;
+            padding: 12px;
+            background-color: #2a2a2a;
+            color: var(--primary-red);
+            border-bottom: 1px solid var(--border-color);
+            width: 40%;
+        }
+
+        .specs-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-gray);
+        }
+
+        .specs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Add to Cart Button */
+        .btn-add {
+            background-color: var(--text-white);
+            color: var(--primary-black);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .btn-add:hover {
+            background-color: var(--primary-red);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR FRAGMENT -->
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+
+    <!-- LEFT: IMAGE PLACEHOLDER -->
+    <div class="image-section">
+        [ Product Image ]
+    </div>
+
+    <!-- RIGHT: DETAILS -->
+    <div class="details-section">
+
+        <!-- 1. COMMON PARENT DATA -->
+        <div class="category-badge" th:text="${product.category != null ? product.category.name : 'Product'}">Category</div>
+        <h1 th:text="${product.name}">Product Name</h1>
+        <div class="price" th:text="'Rs. ' + ${product.price}">0.00</div>
+
+        <!-- Badges -->
+        <div style="margin-bottom: 20px;">
+            <span th:if="${product.trending}" style="color: yellow; border: 1px solid yellow; padding: 2px 8px; font-size: 0.8em; margin-right: 10px;">TRENDING</span>
+            <span th:if="${product.bestSeller}" style="color: cyan; border: 1px solid cyan; padding: 2px 8px; font-size: 0.8em;">BEST SELLER</span>
+        </div>
+
+        <!-- ======================================================= -->
+        <!-- 2. CONDITIONAL SPECS (Based on Java Class Type)         -->
+        <!-- ======================================================= -->
+
+        <!-- A. EARBUDS SPECS -->
+        <div th:if="${product instanceof T(com.pulse.ecommerce.model.EarBudProduct)}">
+            <h3>Earbud Specifications</h3>
+            <table class="specs-table">
+                <tr><th>Driver Size</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
+                <tr><th>Frequency</th><td th:text="${product.frequencyResponse}"></td></tr>
+                <tr><th>Bluetooth</th><td th:text="${product.bluetoothVersion}"></td></tr>
+                <tr><th>Microphone</th><td th:text="${product.mic} ? 'Yes' : 'No'"></td></tr>
+                <tr><th>Noise Cancellation</th><td th:text="${product.noiseCancellation}"></td></tr>
+                <tr><th>Battery (Buds)</th><td th:text="${product.batteryLifeEarbudsHours} + ' Hours'"></td></tr>
+                <tr><th>Battery (Case)</th><td th:text="${product.batteryLifeCaseHours} + ' Hours'"></td></tr>
+                <tr><th>Charging Time</th><td th:text="${product.chargingTimeHours} + ' Hours'"></td></tr>
+                <tr><th>Charging Port</th><td th:text="${product.chargingPort}"></td></tr>
+                <tr><th>Water Resistance</th><td th:text="${product.waterResistanceRating}"></td></tr>
+                <tr><th>Low Latency Mode</th><td th:text="${product.lowLatencyMode} ? 'Yes' : 'No'"></td></tr>
+                <tr><th>Size</th><td th:text="${product.sizeMm} + ' mm'"></td></tr>
+                <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+            </table>
+        </div>
+
+        <!-- B. HEADPHONES SPECS -->
+        <div th:if="${product instanceof T(com.pulse.ecommerce.model.HeadPhoneProduct)}">
+            <h3>Headphone Specifications</h3>
+            <table class="specs-table">
+                <tr><th>Type</th><td th:text="${product.wireless} ? 'Wireless' : 'Wired'"></td></tr>
+                <tr><th>Driver Size</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
+                <tr><th>Frequency</th><td th:text="${product.frequencyResponse}"></td></tr>
+                <tr><th>Impedance</th><td th:text="${product.impedanceOhm} + ' Ohm'"></td></tr>
+                <tr><th>Bluetooth</th><td th:text="${product.bluetoothVersion}"></td></tr>
+                <tr><th>Noise Cancellation</th><td th:text="${product.noiseCancellation}"></td></tr>
+                <tr><th>Microphone</th><td th:text="${product.mic} ? 'Yes' : 'No'"></td></tr>
+                <tr><th>Battery Life</th><td th:text="${product.batteryLifeHours} + ' Hours'"></td></tr>
+                <tr><th>Charging Port</th><td th:text="${product.chargingPort}"></td></tr>
+                <tr><th>Audio Input (Aux)</th><td th:text="${product.audioInput}"></td></tr>
+                <tr><th>Size</th><td th:text="${product.sizeMm} + ' mm'"></td></tr>
+                <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+            </table>
+        </div>
+
+        <!-- C. SPEAKERS SPECS -->
+        <div th:if="${product instanceof T(com.pulse.ecommerce.model.SpeakerProduct)}">
+            <h3>Speaker Specifications</h3>
+            <table class="specs-table">
+                <tr><th>Output Power</th><td th:text="${product.outputPowerWatt} + ' Watts'"></td></tr>
+                <tr><th>Driver Size</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
+                <tr><th>Frequency</th><td th:text="${product.frequencyResponse}"></td></tr>
+                <tr><th>Bluetooth</th><td th:text="${product.bluetoothVersion}"></td></tr>
+                <tr><th>Battery Life</th><td th:text="${product.batteryLifeHours} + ' Hours'"></td></tr>
+                <tr><th>Stereo Pairing</th><td th:text="${product.stereoPairingSupport} ? 'Supported' : 'No'"></td></tr>
+                <tr><th>Water Resistance</th><td th:text="${product.waterResistanceRating}"></td></tr>
+                <tr><th>Charging Port</th><td th:text="${product.chargingPort}"></td></tr>
+                <tr><th>Size</th><td th:text="${product.sizeMm} + ' mm'"></td></tr>
+                <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+            </table>
+        </div>
+
+        <!-- D. WATCHES SPECS -->
+        <div th:if="${product instanceof T(com.pulse.ecommerce.model.WatchProduct)}">
+            <h3>Watch Specifications</h3>
+            <table class="specs-table">
+                <tr><th>Display</th><td th:text="${product.displaySizeInch} + ' inch ' + ${product.displayType}"></td></tr>
+                <tr><th>Resolution</th><td th:text="${product.resolution}"></td></tr>
+                <tr><th>Battery Life</th><td th:text="${product.batteryLifeDays} + ' Days'"></td></tr>
+                <tr><th>Battery Capacity</th><td th:text="${product.batteryCapacityMah} + ' mAh'"></td></tr>
+                <tr><th>Water Resistance</th><td th:text="${product.waterResistanceRating}"></td></tr>
+                <tr><th>Heart Rate Sensor</th><td th:text="${product.heartRateSensor} ? 'Yes' : 'No'"></td></tr>
+                <tr><th>SpO2 Sensor</th><td th:text="${product.spo2Sensor} ? 'Yes' : 'No'"></td></tr>
+                <tr><th>GPS</th><td th:text="${product.gps} ? 'Yes' : 'No'"></td></tr>
+                <tr><th>Sports Modes</th><td th:text="${product.sportsModesCount}"></td></tr>
+                <tr><th>OS Compatibility</th><td th:text="${product.osCompatibility}"></td></tr>
+                <tr><th>Strap Material</th><td th:text="${product.strapMaterial}"></td></tr>
+                <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+            </table>
+        </div>
+
+        <!-- E. POWER BANKS SPECS -->
+        <div th:if="${product instanceof T(com.pulse.ecommerce.model.PowerBankProduct)}">
+            <h3>Power Bank Specifications</h3>
+            <table class="specs-table">
+                <tr><th>Capacity</th><td th:text="${product.capacityMah} + ' mAh'"></td></tr>
+                <tr><th>Max Output</th><td th:text="${product.maxOutputWatt} + ' Watts'"></td></tr>
+                <tr><th>Input Port</th><td th:text="${product.inputPort}"></td></tr>
+                <tr><th>Fast Charging</th><td th:text="${product.fastChargingSupport} ? 'Supported' : 'No'"></td></tr>
+                <tr><th>Battery Type</th><td th:text="${product.batteryType}"></td></tr>
+                <tr><th>Charging Time</th><td th:text="${product.chargingTimeHours} + ' Hours'"></td></tr>
+                <tr><th>Dimensions</th><td th:text="${product.dimensions}"></td></tr>
+                <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
+            </table>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <form action="#" method="post">
+            <button type="submit" class="btn-add">ADD TO CART</button>
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

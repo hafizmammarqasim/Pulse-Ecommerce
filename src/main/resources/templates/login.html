@@ -3,8 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Pulse</title>
+  <title>Login | Pulse</title>
   <style>
+    /* --- PULSE RED/BLACK THEME --- */
+    :root {
+        --primary-black: #121212;
+        --secondary-black: #1e1e1e;
+        --primary-red: #cc0000;
+        --text-white: #ffffff;
+        --text-gray: #b3b3b3;
+        --border-color: #333;
+        --input-bg: #2a2a2a;
+    }
+
     /* 1. RESET & BASE STYLES */
     * {
         box-sizing: border-box;
@@ -14,7 +25,8 @@
 
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f0f2f5; /* Soft gray background */
+        background-color: var(--primary-black);
+        color: var(--text-white);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -23,112 +35,110 @@
 
     /* 2. THE CARD CONTAINER */
     .login-container {
-        background-color: white;
-        padding: 2.5rem; /* 40px */
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Soft shadow */
+        background-color: var(--secondary-black);
+        padding: 3rem; /* 48px */
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow for dark mode */
+        border: 1px solid var(--border-color);
         width: 100%;
-        max-width: 400px; /* Won't get too wide */
+        max-width: 400px;
+        text-align: center;
     }
 
-    /* 3. TYPOGRAPHY */
+    /* 3. TYPOGRAPHY UPDATES */
     .login-header {
-        text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem; /* More space between header and inputs */
     }
 
     .brand-name {
-        color: #6c63ff; /* Pulse Brand Color (Modern Purple/Blue) */
-        font-size: 2rem;
-        font-weight: 700;
-        letter-spacing: -1px;
-        margin-bottom: 0.5rem;
+        font-size: 3rem; /* Made Logo slightly bigger */
+        font-weight: 900;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-white);
         display: block;
+        margin-bottom: 10px; /* Space between Logo and Welcome text */
+        line-height: 1;
+    }
+
+    .brand-name span {
+        color: var(--primary-red);
     }
 
     .login-header p {
-        color: #666;
-        font-size: 0.9rem;
+        color: #cccccc; /* Much lighter gray, almost white */
+        font-size: 1.2rem; /* Increased size significantly */
+        font-weight: 500; /* Made it slightly thicker */
+        letter-spacing: 0.5px;
     }
 
     /* 4. FORM ELEMENTS */
     .form-group {
-        margin-bottom: 1.2rem;
+        margin-bottom: 1.5rem;
     }
 
     input {
         width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        padding: 14px 15px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-white);
+        border-radius: 4px; /* Sharper corners match tech vibe */
         font-size: 1rem;
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
         outline: none;
     }
 
-    /* Glow effect on focus */
+    input::placeholder {
+        color: #666;
+    }
+
+    /* Glow effect on focus (Red) */
     input:focus {
-        border-color: #6c63ff;
-        box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+        border-color: var(--primary-red);
+        box-shadow: 0 0 0 2px rgba(204, 0, 0, 0.2);
     }
 
     /* 5. BUTTON */
     button {
         width: 100%;
-        padding: 12px;
-        background-color: #6c63ff;
+        padding: 14px;
+        background-color: var(--primary-red);
         color: white;
         border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: uppercase;
         cursor: pointer;
         transition: background-color 0.2s ease, transform 0.1s ease;
         margin-top: 10px;
     }
 
     button:hover {
-        background-color: #5a52d5;
+        background-color: #aa0000; /* Darker Red on hover */
     }
 
     button:active {
-        transform: scale(0.98); /* Tiny press effect */
+        transform: scale(0.98);
     }
 
-    /* 6. MESSAGES (Error & Logout) */
-    .alert {
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 15px;
-        font-size: 0.9rem;
-        text-align: center;
-    }
-
-    .alert-error {
-        background-color: #ffebee;
-        color: #c62828;
-        border: 1px solid #ffcdd2;
-    }
-
-    .alert-logout {
-        background-color: #e8f5e9;
-        color: #2e7d32;
-        border: 1px solid #c8e6c9;
-    }
-
-    .footer-link {
-        text-align: center;
-        margin-top: 1.5rem;
-        font-size: 0.9rem;
-        color: #666;
+        .footer-link {
+        margin-top: 30px; /* Pushes it further down from the button */
+        font-size: 1rem;  /* Increased from 0.9rem */
+        color: #999;      /* Lighter gray for better readability */
     }
 
     .footer-link a {
-        color: #6c63ff;
+        color: var(--primary-red);
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 700; /* Bold link to make it stand out */
+        margin-left: 5px; /* Tiny space after the question mark */
+        transition: color 0.2s;
     }
+
     .footer-link a:hover {
+        color: #ff4d4d; /* Brighter red on hover */
         text-decoration: underline;
     }
 
@@ -139,12 +149,11 @@
 <div class="login-container">
 
   <div class="login-header">
-    <span class="brand-name">Pulse.</span>
-    <p>Welcome back! Please login to continue.</p>
+    <div class="brand-name">Pulse<span>.</span></div>
+    <p>Welcome back</p>
   </div>
 
   <!-- ERROR MESSAGE BLOCK -->
-  <!-- Spring sends 'error' param if login fails -->
   <div th:if="${param.error}" class="alert alert-error">
     Invalid username or password.
   </div>
@@ -154,7 +163,8 @@
     You have been logged out.
   </div>
 
-  <div th:if="${param.registrationSuccess}" class="alert alert-logout">
+  <!-- REGISTRATION SUCCESS BLOCK -->
+  <div th:if="${param.registrationSuccess}" class="alert alert-success">
     Account Created Successfully
   </div>
 
@@ -172,7 +182,7 @@
   </form>
 
   <div class="footer-link">
-    Don't have an account? <a href="/register">Sign up</a>
+    New to Pulse? <a href="/register">Create Account</a>
   </div>
 </div>
 

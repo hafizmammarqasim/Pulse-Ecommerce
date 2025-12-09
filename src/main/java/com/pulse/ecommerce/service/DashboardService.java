@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DashboardService {
+    ProductRepository productRepo;
     EarbudProductRepository earbudRepo;
     SpeakerProductRepository speakerRepo;
     HeadPhoneProductRepository headPhoneRepo;
@@ -17,11 +19,13 @@ public class DashboardService {
 
     @Autowired
     public DashboardService(
+            ProductRepository productRepo,
             EarbudProductRepository earbudRepo,
             SpeakerProductRepository speakerRepo,
             HeadPhoneProductRepository headPhoneRepo,
             WatchProductRepository watchRepo,
             PowerBankRepository powerBankRepo){
+        this.productRepo = productRepo;
         this.earbudRepo = earbudRepo;
         this.speakerRepo = speakerRepo;
         this.headPhoneRepo = headPhoneRepo;
@@ -47,5 +51,13 @@ public class DashboardService {
 
     public List<PowerBankProduct> getPowerBanksToDisplay(){
         return powerBankRepo.findTop6ByOrderByPriceAsc();
+    }
+
+    public List<Product> searchProductByName(String keyword){
+        return productRepo.findByNameContaining(keyword);
+    }
+
+    public Optional<Product> getProductDetails(Long id){
+        return productRepo.findById(id);
     }
 }
