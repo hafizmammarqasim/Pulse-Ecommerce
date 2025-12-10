@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title th:text="${product.name} + ' | Pulse'"></title>
     <style>
-        /* --- PULSE THEME VARIABLES --- */
         :root {
             --bg-black: #121212;
             --bg-dark: #1e1e1e;
@@ -23,7 +22,6 @@
             padding: 0;
         }
 
-        /* --- LAYOUT --- */
         .main-container {
             display: flex;
             gap: 50px;
@@ -33,7 +31,6 @@
             align-items: flex-start;
         }
 
-        /* --- LEFT SIDE (Image + Variants) --- */
         .left-column {
             flex: 1;
             position: sticky;
@@ -48,7 +45,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px; /* Space between Image and Variants */
+            margin-bottom: 20px;
         }
 
         .product-img {
@@ -57,7 +54,6 @@
             object-fit: contain;
         }
 
-        /* --- VARIANT SELECTOR (Now on Left) --- */
         .variant-section {
             padding: 20px;
             background: var(--bg-dark);
@@ -106,7 +102,6 @@
             box-shadow: 0 0 10px rgba(204, 0, 0, 0.3);
         }
 
-        /* --- RIGHT SIDE (Info + Button) --- */
         .info-wrapper {
             flex: 1;
         }
@@ -171,13 +166,12 @@
             color: var(--text-white);
         }
 
-        /* --- ADD TO CART BUTTON (Refined) --- */
         .btn-add {
             width: 100%;
             background-color: var(--text-white);
             color: var(--bg-black);
             padding: 15px;
-            font-weight: 700; /* Less bold than before */
+            font-weight: 700;
             font-size: 1.1rem;
             border: none;
             border-radius: 6px;
@@ -192,7 +186,6 @@
             transform: translateY(-2px);
         }
 
-        /* --- BOTTOM SECTION --- */
         .details-container {
             max-width: 1200px;
             margin: 0 auto 100px auto;
@@ -218,29 +211,26 @@
         .full-specs-table tr { border-bottom: 1px solid #333; }
         .full-specs-table th { text-align: left; padding: 20px; color: var(--text-gray); width: 30%; text-transform: uppercase; font-size: 0.9rem; }
         .full-specs-table td { padding: 20px; color: var(--text-white); font-size: 1.1rem; }
-
     </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
 <div class="main-container">
 
-    <!-- FORM START: Wraps both columns so Button can submit selected Variant -->
+    <!-- Single form for Add to Cart -->
     <form action="/cart/add" method="post" style="display: flex; gap: 50px; width: 100%;">
 
+        <!-- Product ID -->
         <input type="hidden" name="productId" th:value="${product.id}">
 
-        <!-- LEFT COLUMN: IMAGE + VARIANTS -->
+        <!-- LEFT: Image + Variants -->
         <div class="left-column">
-            <!-- Image -->
             <div class="image-wrapper">
                 <img th:src="@{/images/tempImage.avif}" class="product-img" alt="Product Image">
             </div>
 
-            <!-- Variant Section (Moved Here) -->
             <div class="variant-section" th:if="${not #lists.isEmpty(product.variants)}">
                 <span class="variant-title">Select Color</span>
                 <div class="variant-options">
@@ -249,7 +239,6 @@
                                th:value="${variant.id}"
                                th:id="'var-'+${variant.id}"
                                th:checked="${iterStat.index == 0}">
-
                         <label th:for="'var-'+${variant.id}" class="variant-label">
                             <span th:text="${variant.color}">Color</span>
                         </label>
@@ -258,76 +247,172 @@
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: INFO + SPECS + BUTTON -->
+        <!-- RIGHT: Info + Specs + Button -->
         <div class="info-wrapper">
-            <span class="category-tag" th:text="${product.category != null ? product.category.name : 'Tech'}">Category</span>
+            <span class="category-tag"
+                  th:text="${product.category != null ? product.category.name : 'Tech'}">Category</span>
             <h1 th:text="${product.name}">Product Name</h1>
             <div class="price" th:text="'Rs. ' + ${product.price}">0.00</div>
 
             <div class="tech-specs-title">Key Specifications</div>
 
-            <!-- SHORT SPECS GRID -->
-
-            <!-- A. EARBUDS GRID -->
-            <div th:if="${product instanceof T(com.pulse.ecommerce.model.EarBudProduct)}" class="short-specs-grid">
-                <div class="spec-box"><span class="spec-label">Driver Size</span><span class="spec-val" th:text="${product.driverSizeMm} + ' mm'"></span></div>
-                <div class="spec-box"><span class="spec-label">Bluetooth</span><span class="spec-val" th:text="${product.bluetoothVersion}"></span></div>
-                <div class="spec-box"><span class="spec-label">Noise Cancellation</span><span class="spec-val" th:text="${product.noiseCancellation}"></span></div>
-                <div class="spec-box"><span class="spec-label">Battery</span><span class="spec-val" th:text="${product.batteryLifeCaseHours} + ' Hours'"></span></div>
-                <div class="spec-box"><span class="spec-label">Latency</span><span class="spec-val" th:text="${product.lowLatencyMode} ? 'Gaming Mode' : 'Standard'"></span></div>
-                <div class="spec-box"><span class="spec-label">Water Resistance</span><span class="spec-val" th:text="${product.waterResistanceRating}"></span></div>
+            <!-- EARBUDS GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.EarBudProduct)}"
+                 class="short-specs-grid">
+                <div class="spec-box">
+                    <span class="spec-label">Driver Size</span>
+                    <span class="spec-val" th:text="${product.driverSizeMm} + ' mm'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Bluetooth</span>
+                    <span class="spec-val" th:text="${product.bluetoothVersion}"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Noise Cancellation</span>
+                    <span class="spec-val" th:text="${product.noiseCancellation}"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Battery</span>
+                    <span class="spec-val" th:text="${product.batteryLifeCaseHours} + ' Hours'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Latency</span>
+                    <span class="spec-val"
+                          th:text="${product.lowLatencyMode} ? 'Gaming Mode' : 'Standard'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Water Resistance</span>
+                    <span class="spec-val" th:text="${product.waterResistanceRating}"></span>
+                </div>
             </div>
 
-            <!-- B. WATCHES GRID -->
-            <div th:if="${product instanceof T(com.pulse.ecommerce.model.WatchProduct)}" class="short-specs-grid">
-                <div class="spec-box"><span class="spec-label">Display</span><span class="spec-val" th:text="${product.displaySizeInch} + ' inch'"></span></div>
-                <div class="spec-box"><span class="spec-label">Type</span><span class="spec-val" th:text="${product.displayType}"></span></div>
-                <div class="spec-box"><span class="spec-label">Battery</span><span class="spec-val" th:text="${product.batteryLifeDays} + ' Days'"></span></div>
-                <div class="spec-box"><span class="spec-label">Waterproof</span><span class="spec-val" th:text="${product.waterResistanceRating}"></span></div>
-                <div class="spec-box"><span class="spec-label">Calling</span><span class="spec-val">Bluetooth Calling</span></div>
-                <div class="spec-box"><span class="spec-label">Sports Modes</span><span class="spec-val" th:text="${product.sportsModesCount} + '+'"></span></div>
+            <!-- WATCHES GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.WatchProduct)}"
+                 class="short-specs-grid">
+                <div class="spec-box">
+                    <span class="spec-label">Display</span>
+                    <span class="spec-val" th:text="${product.displaySizeInch} + ' inch'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Type</span>
+                    <span class="spec-val" th:text="${product.displayType}"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Battery</span>
+                    <span class="spec-val" th:text="${product.batteryLifeDays} + ' Days'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Waterproof</span>
+                    <span class="spec-val" th:text="${product.waterResistanceRating}"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Calling</span>
+                    <span class="spec-val">Bluetooth Calling</span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Sports Modes</span>
+                    <span class="spec-val" th:text="${product.sportsModesCount} + '+'"></span>
+                </div>
             </div>
 
-            <!-- C. HEADPHONES GRID -->
-            <div th:if="${product instanceof T(com.pulse.ecommerce.model.HeadPhoneProduct)}" class="short-specs-grid">
-                <div class="spec-box"><span class="spec-label">Type</span><span class="spec-val" th:text="${product.wireless} ? 'Wireless' : 'Wired'"></span></div>
-                <div class="spec-box"><span class="spec-label">Battery</span><span class="spec-val" th:text="${product.batteryLifeHours} + ' Hours'"></span></div>
-                <div class="spec-box"><span class="spec-label">Driver</span><span class="spec-val" th:text="${product.driverSizeMm} + ' mm'"></span></div>
-                <div class="spec-box"><span class="spec-label">Noise Cancellation</span><span class="spec-val" th:text="${product.noiseCancellation}"></span></div>
-                <div class="spec-box"><span class="spec-label">Mic</span><span class="spec-val" th:text="${product.mic} ? 'Yes' : 'No'"></span></div>
-                <div class="spec-box"><span class="spec-label">Aux Input</span><span class="spec-val" th:text="${product.audioInput} != null ? 'Yes' : 'No'"></span></div>
+            <!-- HEADPHONES GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.HeadPhoneProduct)}"
+                 class="short-specs-grid">
+                <div class="spec-box">
+                    <span class="spec-label">Type</span>
+                    <span class="spec-val" th:text="${product.wireless} ? 'Wireless' : 'Wired'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Battery</span>
+                    <span class="spec-val" th:text="${product.batteryLifeHours} + ' Hours'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Driver</span>
+                    <span class="spec-val" th:text="${product.driverSizeMm} + ' mm'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Noise Cancellation</span>
+                    <span class="spec-val" th:text="${product.noiseCancellation}"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Mic</span>
+                    <span class="spec-val" th:text="${product.mic} ? 'Yes' : 'No'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Aux Input</span>
+                    <span class="spec-val"
+                          th:text="${product.audioInput} != null ? 'Yes' : 'No'"></span>
+                </div>
             </div>
 
-            <!-- D. SPEAKERS GRID -->
-            <div th:if="${product instanceof T(com.pulse.ecommerce.model.SpeakerProduct)}" class="short-specs-grid">
-                <div class="spec-box"><span class="spec-label">Output</span><span class="spec-val" th:text="${product.outputPowerWatt} + ' Watts'"></span></div>
-                <div class="spec-box"><span class="spec-label">Playtime</span><span class="spec-val" th:text="${product.batteryLifeHours} + ' Hours'"></span></div>
-                <div class="spec-box"><span class="spec-label">Waterproof</span><span class="spec-val" th:text="${product.waterResistanceRating}"></span></div>
-                <div class="spec-box"><span class="spec-label">TWS Mode</span><span class="spec-val" th:text="${product.stereoPairingSupport} ? 'Supported' : 'No'"></span></div>
-                <div class="spec-box"><span class="spec-label">Bluetooth</span><span class="spec-val" th:text="${product.bluetoothVersion}"></span></div>
+            <!-- SPEAKERS GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.SpeakerProduct)}"
+                 class="short-specs-grid">
+                <div class="spec-box">
+                    <span class="spec-label">Output</span>
+                    <span class="spec-val" th:text="${product.outputPowerWatt} + ' Watts'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Playtime</span>
+                    <span class="spec-val" th:text="${product.batteryLifeHours} + ' Hours'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Waterproof</span>
+                    <span class="spec-val" th:text="${product.waterResistanceRating}"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">TWS Mode</span>
+                    <span class="spec-val"
+                          th:text="${product.stereoPairingSupport} ? 'Supported' : 'No'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Bluetooth</span>
+                    <span class="spec-val" th:text="${product.bluetoothVersion}"></span>
+                </div>
             </div>
 
-            <!-- E. POWER BANKS GRID -->
-            <div th:if="${product instanceof T(com.pulse.ecommerce.model.PowerBankProduct)}" class="short-specs-grid">
-                <div class="spec-box"><span class="spec-label">Capacity</span><span class="spec-val" th:text="${product.capacityMah} + ' mAh'"></span></div>
-                <div class="spec-box"><span class="spec-label">Max Output</span><span class="spec-val" th:text="${product.maxOutputWatt} + 'W'"></span></div>
-                <div class="spec-box"><span class="spec-label">Fast Charge</span><span class="spec-val" th:text="${product.fastChargingSupport} ? 'PD/QC 3.0' : 'No'"></span></div>
-                <div class="spec-box"><span class="spec-label">Ports</span><span class="spec-val" th:text="${product.inputPort}"></span></div>
-                <div class="spec-box"><span class="spec-label">Battery</span><span class="spec-val" th:text="${product.batteryType}"></span></div>
+            <!-- POWER BANKS GRID -->
+            <div th:if="${product instanceof T(com.pulse.ecommerce.model.PowerBankProduct)}"
+                 class="short-specs-grid">
+                <div class="spec-box">
+                    <span class="spec-label">Capacity</span>
+                    <span class="spec-val" th:text="${product.capacityMah} + ' mAh'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Max Output</span>
+                    <span class="spec-val" th:text="${product.maxOutputWatt} + 'W'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Fast Charge</span>
+                    <span class="spec-val"
+                          th:text="${product.fastChargingSupport} ? 'PD/QC 3.0' : 'No'"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Ports</span>
+                    <span class="spec-val" th:text="${product.inputPort}"></span>
+                </div>
+                <div class="spec-box">
+                    <span class="spec-label">Battery</span>
+                    <span class="spec-val" th:text="${product.batteryType}"></span>
+                </div>
             </div>
 
-            <!-- THE BUTTON (Visible Immediately) -->
+            <!-- Quantity (hidden for now) -->
+            <input type="hidden" name="quantity" value="1">
+
+            <!-- ADD TO CART BUTTON -->
             <button type="submit" class="btn-add">Add to Cart</button>
         </div>
     </form>
 </div>
 
-<!-- BOTTOM SECTION: FULL DETAILED SPECIFICATIONS -->
+<!-- FULL DETAILS TABLES (unchanged from your version) -->
 <div class="details-container">
     <h3 class="details-header">Comprehensive Details</h3>
 
-    <!-- A. EARBUDS FULL TABLE -->
-    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.EarBudProduct)}">
+    <!-- EARBUDS FULL TABLE -->
+    <table class="full-specs-table"
+           th:if="${product instanceof T(com.pulse.ecommerce.model.EarBudProduct)}">
         <tr><th>Driver Size</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
         <tr><th>Frequency Response</th><td th:text="${product.frequencyResponse}"></td></tr>
         <tr><th>Bluetooth Version</th><td th:text="${product.bluetoothVersion}"></td></tr>
@@ -343,8 +428,9 @@
         <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
     </table>
 
-    <!-- B. HEADPHONES FULL TABLE -->
-    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.HeadPhoneProduct)}">
+    <!-- HEADPHONES FULL TABLE -->
+    <table class="full-specs-table"
+           th:if="${product instanceof T(com.pulse.ecommerce.model.HeadPhoneProduct)}">
         <tr><th>Driver Size</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
         <tr><th>Connectivity</th><td th:text="${product.wireless} ? 'Wireless' : 'Wired'"></td></tr>
         <tr><th>Frequency Response</th><td th:text="${product.frequencyResponse}"></td></tr>
@@ -359,8 +445,9 @@
         <tr><th>Size</th><td th:text="${product.sizeMm} + ' mm'"></td></tr>
     </table>
 
-    <!-- C. SPEAKERS FULL TABLE -->
-    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.SpeakerProduct)}">
+    <!-- SPEAKERS FULL TABLE -->
+    <table class="full-specs-table"
+           th:if="${product instanceof T(com.pulse.ecommerce.model.SpeakerProduct)}">
         <tr><th>Output Power (RMS)</th><td th:text="${product.outputPowerWatt} + ' Watts'"></td></tr>
         <tr><th>Driver Unit</th><td th:text="${product.driverSizeMm} + ' mm'"></td></tr>
         <tr><th>Frequency Response</th><td th:text="${product.frequencyResponse}"></td></tr>
@@ -373,8 +460,9 @@
         <tr><th>Size</th><td th:text="${product.sizeMm} + ' mm'"></td></tr>
     </table>
 
-    <!-- D. WATCHES FULL TABLE -->
-    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.WatchProduct)}">
+    <!-- WATCHES FULL TABLE -->
+    <table class="full-specs-table"
+           th:if="${product instanceof T(com.pulse.ecommerce.model.WatchProduct)}">
         <tr><th>Display Type</th><td th:text="${product.displayType}"></td></tr>
         <tr><th>Display Size</th><td th:text="${product.displaySizeInch} + ' inches'"></td></tr>
         <tr><th>Screen Resolution</th><td th:text="${product.resolution}"></td></tr>
@@ -390,8 +478,9 @@
         <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
     </table>
 
-    <!-- E. POWER BANKS FULL TABLE -->
-    <table class="full-specs-table" th:if="${product instanceof T(com.pulse.ecommerce.model.PowerBankProduct)}">
+    <!-- POWER BANKS FULL TABLE -->
+    <table class="full-specs-table"
+           th:if="${product instanceof T(com.pulse.ecommerce.model.PowerBankProduct)}">
         <tr><th>Capacity</th><td th:text="${product.capacityMah} + ' mAh'"></td></tr>
         <tr><th>Max Output Power</th><td th:text="${product.maxOutputWatt} + ' Watts'"></td></tr>
         <tr><th>Input Ports</th><td th:text="${product.inputPort}"></td></tr>
@@ -401,7 +490,6 @@
         <tr><th>Dimensions</th><td th:text="${product.dimensions}"></td></tr>
         <tr><th>Weight</th><td th:text="${product.weightGrams} + ' g'"></td></tr>
     </table>
-
 </div>
 
 </body>

@@ -40,17 +40,34 @@ public class SecurityConfig {
         }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.
-                authorizeHttpRequests(request ->
-                        request.requestMatchers("/login","/register","/home").permitAll()
-                                .anyRequest().authenticated()
-                ).formLogin(
-                        form -> form.loginPage("/login")
-                        .loginProcessingUrl("/login").permitAll())
-                .logout(logout -> logout
-                        .permitAll());
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(
+                                "/",
+                                "/home",
+                                "/login",
+                                "/register",
+                                "/product-details/**",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
+                        ).permitAll()
+                        // everything under /cart MUST be logged in
+                        .requestMatchers("/cart/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .permitAll()
+                )
+                .logout(logout -> logout.permitAll());
 
         return http.build();
     }
+
+
+
 }

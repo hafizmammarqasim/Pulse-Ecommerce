@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Cart | Pulse</title>
+    <style>
+        :root {
+          --bg-black:#121212;
+          --bg-dark:#1e1e1e;
+          --card:#1b1b1b;
+          --border:#2b2b2b;
+          --brand-red:#cc0000;
+          --text-white:#ffffff;
+          --text-gray:#b3b3b3;
+        }
+        * { box-sizing:border-box; }
+        body{
+          margin:0;
+          font-family:'Segoe UI',sans-serif;
+          background:radial-gradient(circle at top,#202020 0,#121212 55%);
+          color:var(--text-white);
+        }
+        .page{
+          max-width:1200px;
+          margin:80px auto 40px;
+          padding:0 20px 40px;
+          display:grid;
+          grid-template-columns:2fr 1fr;
+          gap:25px;
+        }
+        h1{ margin:0 0 20px; font-size:2rem; letter-spacing:1px; }
+        .cart-card{
+          background:var(--card);
+          border-radius:14px;
+          border:1px solid var(--border);
+          padding:20px;
+          box-shadow:0 20px 40px rgba(0,0,0,0.4);
+        }
+        .cart-header{
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:15px;
+        }
+        .cart-count{
+          font-size:0.9rem;
+          color:var(--text-gray);
+          text-transform:uppercase;
+        }
+        .cart-items{
+          display:flex;
+          flex-direction:column;
+          gap:15px;
+        }
+        .cart-item{
+          display:grid;
+          grid-template-columns:auto 1fr auto;
+          gap:15px;
+          padding:15px;
+          border-radius:10px;
+          background:linear-gradient(135deg,#1f1f1f,#181818);
+          border:1px solid #2a2a2a;
+        }
+        .cart-thumb{
+          width:80px; height:80px;
+          border-radius:10px;
+          background:#101010;
+          display:flex; align-items:center; justify-content:center;
+          overflow:hidden;
+        }
+        .cart-thumb img{
+          max-width:100%; max-height:100%; object-fit:contain;
+        }
+        .cart-info{
+          display:flex;
+          flex-direction:column;
+          justify-content:space-between;
+        }
+        .cart-title{ font-weight:600; margin-bottom:4px; }
+        .cart-meta{ font-size:0.85rem; color:var(--text-gray); }
+        .cart-price{ font-weight:700; color:var(--brand-red); margin-top:8px; }
+        .cart-actions{
+          display:flex;
+          flex-direction:column;
+          align-items:flex-end;
+          justify-content:space-between;
+          gap:10px;
+        }
+        .qty-form{
+          display:flex;
+          align-items:center;
+          gap:6px;
+        }
+        .qty-input{
+          width:56px;
+          padding:6px 8px;
+          border-radius:6px;
+          border:1px solid var(--border);
+          background:#111;
+          color:var(--text-white);
+        }
+        .btn{
+          border:none;
+          cursor:pointer;
+          border-radius:999px;
+          padding:7px 14px;
+          font-size:0.8rem;
+          font-weight:600;
+          text-transform:uppercase;
+          letter-spacing:0.5px;
+        }
+        .btn-update{ background:#ffffff; color:#000000; }
+        .btn-delete{ background:transparent; color:var(--text-gray); }
+        .btn-delete:hover{ color:#ff4d4d; }
+        .line-total{ font-size:0.9rem; color:var(--text-gray); }
+        .empty{
+          padding:40px;
+          text-align:center;
+          color:var(--text-gray);
+        }
+        .summary{
+          background:var(--card);
+          border-radius:14px;
+          border:1px solid var(--border);
+          padding:20px 20px 25px;
+          box-shadow:0 20px 40px rgba(0,0,0,0.4);
+          position:sticky;
+          top:80px;
+          align-self:flex-start;
+        }
+        .summary-title{
+          font-size:1.1rem;
+          text-transform:uppercase;
+          color:var(--text-gray);
+          letter-spacing:1px;
+          margin-bottom:20px;
+        }
+        .summary-row{
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:10px;
+          font-size:0.95rem;
+          color:var(--text-gray);
+        }
+        .summary-row.total{
+          margin-top:10px;
+          padding-top:10px;
+          border-top:1px dashed var(--border);
+          font-size:1.1rem;
+          color:var(--text-white);
+          font-weight:700;
+        }
+        .btn-checkout{
+          width:100%;
+          margin-top:20px;
+          padding:13px 0;
+          border-radius:999px;
+          border:none;
+          background:linear-gradient(135deg,#ffffff,#e3e3e3);
+          color:#000;
+          font-weight:700;
+          text-transform:uppercase;
+          letter-spacing:1px;
+          cursor:pointer;
+        }
+        .btn-checkout:hover{ filter:brightness(0.95); }
+        .note{
+          font-size:0.75rem;
+          color:var(--text-gray);
+          margin-top:10px;
+        }
+        @media (max-width:900px){
+          .page{ grid-template-columns:1fr; }
+          .summary{ position:static; order:-1; }
+        }
+        @media (max-width:600px){
+          .cart-item{ grid-template-columns:1fr; }
+          .cart-actions{ flex-direction:row; justify-content:space-between; }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="page" th:if="${cart != null}">
+    <!-- LEFT: CART ITEMS -->
+    <div class="cart-card">
+        <div class="cart-header">
+            <h1>My Cart</h1>
+            <span class="cart-count"
+                  th:text="${#lists.size(cart.cartItems)} + ' items'">0 items</span>
+        </div>
+
+        <div class="cart-items"
+             th:if="${cart.cartItems != null and !#lists.isEmpty(cart.cartItems)}">
+
+            <div class="cart-item" th:each="item : ${cart.cartItems}">
+                <div class="cart-thumb">
+                    <img th:src="@{/images/tempImage.avif}" alt="Product">
+                </div>
+
+                <div class="cart-info">
+                    <div>
+                        <div class="cart-title"
+                             th:text="${item.variant.product.name}">Product Name</div>
+                        <div class="cart-meta">
+                            <span th:text="'Color: ' + ${item.variant.color}">Color</span>
+                        </div>
+                    </div>
+                    <div class="cart-price"
+                         th:text="'Rs. ' + ${item.variant.product.price}">0</div>
+                </div>
+
+                <div class="cart-actions">
+                    <form class="qty-form"
+                          th:action="@{/cart/item/update}" method="post">
+                        <input type="hidden" name="itemId" th:value="${item.id}">
+                        <input class="qty-input" type="number" min="1"
+                               name="quantity" th:value="${item.quantity}">
+                        <button class="btn btn-update" type="submit">Update</button>
+                    </form>
+
+                    <div class="line-total"
+                         th:text="'Total: Rs. ' + ${item.variant.product.price * item.quantity}">
+                        Total: 0
+                    </div>
+
+                    <form th:action="@{/cart/item/delete}" method="post">
+                        <input type="hidden" name="itemId" th:value="${item.id}">
+                        <button class="btn btn-delete" type="submit">Remove</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty"
+             th:if="${cart.cartItems == null or #lists.isEmpty(cart.cartItems)}">
+            Your cart is empty. Start exploring our latest tech.
+        </div>
+    </div>
+
+    <!-- RIGHT: SUMMARY -->
+    <div class="summary"
+         th:if="${cart.cartItems != null and !#lists.isEmpty(cart.cartItems)}">
+        <div class="summary-title">Order Summary</div>
+
+        <div th:with="total=0">
+            <div th:each="item : ${cart.cartItems}"
+                 th:with="line=${item.variant.product.price * item.quantity},
+                    total=${total + line}">
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span th:text="'Rs. ' + ${total}">0</span>
+            </div>
+        </div>
+
+
+        <form th:action="@{/order/delivery}" method="get">
+            <button class="btn-checkout" type="submit">Place Order</button>
+        </form>
+
+        <div class="note">Login is required to complete your purchase.</div>
+    </div>
+</div>
+
+<div class="page" th:if="${cart == null}">
+    <div class="cart-card empty">
+        <h1>My Cart</h1>
+        <p>Your cart is empty.</p>
+    </div>
+</div>
+
+</body>
+</html>

@@ -34,6 +34,7 @@ public class AuthController {
 
     }
 
+
     @GetMapping("/register")
     public String registerUser(Model model){
         UserRecord userRecord = new UserRecord();

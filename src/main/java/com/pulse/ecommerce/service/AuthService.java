@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 @Service
 public class AuthService implements UserDetailsService {
     private UserRepo userRepo;
@@ -57,7 +59,7 @@ public class AuthService implements UserDetailsService {
     public boolean phoneNumberExists(String phoneNumber){
         return userRepo.existsByPhoneNumber(phoneNumber);
     }
-}
+
 
 //                                   ------Another Way -------
 //        // 1. Get the Box (Optional)
@@ -68,3 +70,15 @@ public class AuthService implements UserDetailsService {
 //            throw new UsernameNotFoundException("User not found");
 //        }
 
+
+public UserRecord getCurrentUser() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+        return null; // or throw if you prefer
+    }
+
+    String username = auth.getName(); // this is email in your loadUserByUsername
+    return userRepo.findByEmailOrPhoneNumber(username, username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+}
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | Pulse</title>
+    <style>
+        :root {
+          --bg-black:#121212;
+          --bg-dark:#1e1e1e;
+          --card:#1b1b1b;
+          --border:#2b2b2b;
+          --brand-red:#cc0000;
+          --text-white:#ffffff;
+          --text-gray:#b3b3b3;
+        }
+        *{box-sizing:border-box;}
+        body{
+          margin:0;
+          font-family:'Segoe UI',sans-serif;
+          background:#121212;
+          color:var(--text-white);
+        }
+        .page{
+          max-width:1200px;
+          margin:80px auto 40px;
+          padding:0 20px 40px;
+          display:grid;
+          grid-template-columns:2fr 1.5fr;
+          gap:25px;
+        }
+        .card{
+          background:var(--card);
+          border-radius:14px;
+          border:1px solid var(--border);
+          padding:20px 20px 25px;
+          box-shadow:0 20px 40px rgba(0,0,0,0.4);
+        }
+        h1,h2{margin:0 0 20px;}
+        .label{
+          font-size:0.8rem;
+          text-transform:uppercase;
+          color:var(--text-gray);
+          margin-bottom:4px;
+        }
+        .value{
+          font-size:1rem;
+          margin-bottom:8px;
+        }
+        .summary-row{
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:8px;
+          font-size:0.9rem;
+          color:var(--text-gray);
+        }
+        .summary-row.total{
+          margin-top:10px;
+          padding-top:10px;
+          border-top:1px dashed var(--border);
+          color:#fff;
+          font-weight:700;
+        }
+        select{
+          width:100%;
+          padding:10px;
+          margin-bottom:12px;
+          border-radius:8px;
+          border:1px solid var(--border);
+          background:#111;
+          color:#fff;
+          outline:none;
+        }
+        .btn-primary{
+          width:100%;
+          margin-top:10px;
+          padding:13px 0;
+          border-radius:999px;
+          border:none;
+          background:linear-gradient(135deg,#ffffff,#e3e3e3);
+          color:#000;
+          font-weight:700;
+          text-transform:uppercase;
+          letter-spacing:1px;
+          cursor:pointer;
+        }
+        .btn-primary:hover{filter:brightness(0.95);}
+        @media(max-width:900px){
+          .page{grid-template-columns:1fr;}
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="page">
+
+    <!-- LEFT: Delivery + payment -->
+    <div class="card">
+        <h1>Review &amp; Payment</h1>
+
+        <div>
+            <div class="label">Deliver To</div>
+            <div class="value" th:text="${delivery.firstName} + ' ' + ${delivery.lastName}">Name</div>
+            <div class="value" th:text="${delivery.addressLine}">Address</div>
+            <div class="value" th:text="${delivery.city} + ', ' + ${delivery.country}">City</div>
+            <div class="value" th:text="${delivery.phone}">Phone</div>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--border);margin:15px 0;">
+
+        <form th:action="@{/order/place}" method="post">
+            <input type="hidden" name="deliveryId" th:value="${delivery.id}">
+
+            <label class="label">Payment Method</label>
+            <select name="paymentMethod">
+                <option value="COD"
+                        th:selected="${paymentMethod == 'COD'}">Cash on Delivery</option>
+                <option value="CARD"
+                        th:selected="${paymentMethod == 'CARD'}">Card (mock)</option>
+            </select>
+
+            <button type="submit" class="btn-primary">Confirm Order</button>
+        </form>
+
+    </div>
+
+    <!-- RIGHT: Order summary -->
+    <div class="card" th:if="${cart != null}">
+        <h2>Order Summary</h2>
+
+        <div th:each="item : ${cart.cartItems}" class="summary-row">
+            <span th:text="${item.variant.product.name} + ' x ' + ${item.quantity}">Item</span>
+            <span th:text="'Rs. ' + ${item.variant.product.price * item.quantity}">0</span>
+        </div>
+
+        <div th:with="total=0">
+            <div th:each="item : ${cart.cartItems}"
+                 th:with="line=${item.variant.product.price * item.quantity},
+                    total=${total + line}">
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span th:text="'Rs. ' + ${total}">0</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
