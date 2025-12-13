@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>My Orders | Pulse</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* --- PULSE THEME VARIABLES --- */
+    :root {
+        --bg-black: #121212;
+        --bg-dark: #1b1b1b;
+        --bg-card: #242424;
+        --brand-red: #cc0000;
+        --text-white: #ffffff;
+        --text-gray: #a0a0a0;
+        --border-color: #333;
+    }
+
+    body {
+        background-color: var(--bg-black);
+        color: var(--text-white);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    /* --- PAGE HEADER --- */
+    .page-header {
+        margin-bottom: 40px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin: 0 0 5px 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-left: 6px solid var(--brand-red);
+        padding-left: 15px;
+        background: -webkit-linear-gradient(#fff, #bbb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+        color: var(--text-gray);
+        font-size: 0.9rem;
+        padding-left: 21px; /* Aligns with text start */
+    }
+
+    /* --- ORDER CARD DESIGN --- */
+    .order-card {
+        background-color: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 30px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3); /* Premium Shadow */
+        transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .order-card:hover {
+        transform: translateY(-2px);
+        border-color: #555;
+    }
+
+    /* --- CARD HEADER (The Summary Strip) --- */
+    .order-header {
+        background-color: var(--bg-card);
+        padding: 20px 25px;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr 1fr 1.5fr auto; /* Fixed Grid Layout */
+        gap: 20px;
+        align-items: center;
+        border-bottom: 1px solid #333;
+    }
+
+    .header-col {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--text-gray);
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .val {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-white);
+    }
+
+    /* The Price Value */
+    .val.price {
+        color: var(--brand-red);
+        font-family: monospace; /* Tech feel for numbers */
+        font-size: 1.1rem;
+    }
+
+    /* --- STATUS BADGES --- */
+    .badge {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        display: inline-block;
+        text-align: center;
+        letter-spacing: 0.5px;
+        min-width: 100px; /* Fixed width for alignment */
+    }
+
+    /* Delivery Statuses */
+    .status-PENDING { background: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid #ffc107; }
+    .status-SHIPPED { background: rgba(23, 162, 184, 0.15); color: #17a2b8; border: 1px solid #17a2b8; }
+    .status-DELIVERED { background: rgba(40, 167, 69, 0.15); color: #28a745; border: 1px solid #28a745; }
+    .status-CANCELLED { background: rgba(220, 53, 69, 0.15); color: #dc3545; border: 1px solid #dc3545; }
+
+    /* Return Statuses */
+    .status-REQUESTED, .status-RETURN_REQUESTED { background: rgba(111, 66, 193, 0.15); color: #b185f7; border: 1px solid #b185f7; }
+    .status-APPROVED { background: rgba(0, 123, 255, 0.15); color: #5aaaff; border: 1px solid #007bff; }
+    .status-REFUNDED { background: rgba(40, 167, 69, 0.15); color: #28a745; border: 1px solid #28a745; }
+    .status-REJECTED { background: rgba(220, 53, 69, 0.15); color: #dc3545; border: 1px solid #dc3545; }
+
+    /* --- THE "VIEW DETAILS" BUTTON (Improved) --- */
+    .btn-view-details {
+        background-color: transparent;
+        color: var(--text-white);
+        border: 1px solid var(--text-gray);
+        padding: 10px 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .btn-view-details:hover {
+        border-color: var(--brand-red);
+        color: var(--brand-red);
+        background-color: rgba(204, 0, 0, 0.05);
+        box-shadow: 0 0 10px rgba(204, 0, 0, 0.2);
+    }
+
+    /* --- ITEMS SECTION --- */
+    .order-body {
+        padding: 0 25px;
+    }
+
+    .order-item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #333;
+    }
+
+    .order-item-row:last-child {
+        border-bottom: none;
+    }
+
+    .item-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .item-img {
+        width: 70px;
+        height: 70px;
+        background: white;
+        border-radius: 8px;
+        object-fit: contain;
+        padding: 5px;
+    }
+
+    .item-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: block;
+        margin-bottom: 4px;
+        color: var(--text-white);
+    }
+
+    .item-meta {
+        font-size: 0.9rem;
+        color: var(--text-gray);
+    }
+
+    /* Status Text on Right (Small text) */
+    .item-status-text {
+        font-size: 0.85rem;
+        text-align: right;
+    }
+
+    /* --- EMPTY STATE --- */
+    .empty-state {
+        text-align: center;
+        padding: 80px;
+        background-color: var(--bg-dark);
+        border: 1px dashed var(--border-color);
+        border-radius: 12px;
+        color: var(--text-gray);
+    }
+
+    .btn-shop {
+        background-color: var(--brand-red);
+        color: white;
+        padding: 12px 30px;
+        text-decoration: none;
+        font-weight: 800;
+        text-transform: uppercase;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 20px;
+        transition: 0.3s;
+    }
+    .btn-shop:hover { background-color: #aa0000; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .order-header { grid-template-columns: 1fr 1fr; gap: 20px; }
+        .header-col:last-child { grid-column: 1 / -1; justify-self: start; margin-top: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+
+  <div class="page-header">
+    <div>
+      <h1>Order History</h1>
+      <div class="subtitle">Track your recent purchases and returns</div>
+    </div>
+  </div>
+
+  <!-- 1. IF ORDERS EXIST -->
+  <div th:if="${not #lists.isEmpty(orderList)}">
+
+    <!-- Loop through each Order -->
+    <div class="order-card" th:each="order : ${orderList}">
+
+      <!-- HEADER: The Summary Bar -->
+      <div class="order-header">
+
+        <div class="header-col">
+          <span class="label">Order ID</span>
+          <span class="val" th:text="'#' + ${order.id}">#501</span>
+        </div>
+
+        <div class="header-col">
+          <span class="label">Date</span>
+          <span class="val" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy')}">12 DEC 2025</span>
+        </div>
+
+        <div class="header-col">
+          <span class="label">Total</span>
+          <span class="val price" th:text="'Rs. ' + ${order.totalAmount}">Rs. 5000</span>
+        </div>
+
+        <div class="header-col">
+          <span class="label">Status</span>
+
+          <!-- OPTION 2 LOGIC: Check Map for Return Status -->
+          <span th:if="${returnStatuses.containsKey(order.id)}"
+                class="badge"
+                th:classappend="'status-' + ${returnStatuses.get(order.id)}"
+                >RETURN REQUESTED</span>
+
+          <!-- Normal Status -->
+          <span th:unless="${returnStatuses.containsKey(order.id)}"
+                class="badge"
+                th:classappend="'status-' + ${order.status}"
+                th:text="${order.status}">PENDING</span>
+        </div>
+
+        <!-- NEW IMPROVED BUTTON -->
+        <div class="header-col" style="align-items: flex-end;">
+          <a th:href="@{/order/details/{id}(id=${order.id})}" class="btn-view-details">
+            View Details <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- BODY: Preview Items -->
+      <div class="order-body">
+        <div class="order-item-row" th:each="item : ${order.items}">
+
+          <!-- Left: Item Info -->
+          <div class="item-info">
+            <img th:src="@{/images/tempImage.avif}" class="item-img" alt="Product">
+
+            <div>
+              <span class="item-name" th:text="${item.variant.product.name}">Product Name</span>
+              <div class="item-meta">
+                <span th:text="${item.variant.color}">Color</span>
+                &nbsp;|&nbsp; Qty: <span th:text="${item.quantity}">1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status Text -->
+          <div class="item-status-text">
+            <!-- Return Active -->
+            <span th:if="${returnStatuses.containsKey(order.id)}" style="color: #b185f7; font-weight: 600;">
+                  <i class="fas fa-undo"></i> Return Processing
+              </span>
+
+            <!-- Normal Flow -->
+            <span th:unless="${returnStatuses.containsKey(order.id)}" style="color: #666;">
+                   <span th:if="${order.status == 'DELIVERED'}" style="color: #28a745; font-weight: 600;">✓ Delivered</span>
+                   <span th:if="${order.status == 'PENDING'}">Processing...</span>
+                   <span th:if="${order.status == 'SHIPPED'}">On the way</span>
+              </span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- 2. IF NO ORDERS -->
+  <div class="empty-state" th:if="${#lists.isEmpty(orderList)}">
+    <h3 style="color:white; margin-bottom:10px;">No orders found</h3>
+    <p>You haven't placed any orders yet.</p>
+    <a href="/" class="btn-shop">Start Shopping</a>
+  </div>
+
+</div>
+
+</body>
+</html>

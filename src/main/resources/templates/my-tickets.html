@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title> Support Inbox | Pulse</title>
+  <style>
+    :root { --bg-black: #121212; --bg-dark: #1e1e1e; --brand-red: #cc0000; --text-white: #ffffff; --border: #333; }
+    body { background-color: var(--bg-black); color: var(--text-white); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+    .container { max-width: 900px; margin: 40px auto; }
+
+    h1 { border-left: 6px solid var(--brand-red); padding-left: 15px; text-transform: uppercase; margin-bottom: 30px; }
+
+    .ticket-card {
+        background-color: var(--bg-dark); border: 1px solid var(--border);
+        border-radius: 8px; padding: 20px; margin-bottom: 15px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .ticket-info h4 { margin: 0 0 5px 0; font-size: 1.1rem; }
+    .ticket-meta { font-size: 0.85rem; color: #888; }
+
+    .badge { padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+    .status-OPEN { background: #007bff; color: white; }
+    .status-IN_PROGRESS { background: #ffc107; color: black; }
+    .status-RESOLVED { background: #28a745; color: white; }
+    .status-REJECTED { background: #dc3545; color: white; }
+  </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>My Support Inbox</h1>
+    <p class="subtitle">Track your returns and support messages.</p>
+    <a href="/support/create" class="btn" style="color: var(--brand-red); border: 1px solid var(--brand-red); padding: 8px 15px; text-decoration: none; border-radius: 4px;">+ New Inquiry</a>
+  </div>
+
+  <div th:if="${not #lists.isEmpty(tickets)}">
+    <div th:each="ticket : ${tickets}" class="ticket-card">
+      <div class="ticket-info">
+        <h4 th:text="${ticket.subject}">Subject</h4>
+        <div class="ticket-meta">
+          <span th:text="${ticket.type}">TYPE</span> |
+          <span th:text="${#temporals.format(ticket.createdAt, 'dd MMM yyyy')}">Date</span>
+          <span th:if="${ticket.order != null}" th:text="' | Order #' + ${ticket.order.id}"></span>
+        </div>
+      </div>
+      <div>
+                <span class="badge"
+                      th:classappend="'status-' + ${ticket.status}"
+                      th:text="${ticket.status}">OPEN</span>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${#lists.isEmpty(tickets)}" style="text-align: center; color: #666; margin-top: 50px;">
+    <p>No support tickets found.</p>
+  </div>
+</div>
+
+</body>
+</html>

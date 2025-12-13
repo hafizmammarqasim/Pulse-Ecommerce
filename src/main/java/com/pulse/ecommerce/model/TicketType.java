@@ -1,7 +1,9 @@
 package com.pulse.ecommerce.model;
 
 public enum TicketType {
-    RETURN_REQUEST,
+    CANCELLATION,
+    RETURN,
+    WARRANTY,
     COMPLAINT,
     INQUIRY
 }

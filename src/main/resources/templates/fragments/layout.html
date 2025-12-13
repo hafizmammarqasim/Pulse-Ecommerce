@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
 <nav th:fragment="navbar" style="
@@ -12,7 +13,7 @@
     border-bottom: 4px solid #cc0000;
     font-family: sans-serif;">
 
-    <!-- Logo -->
+    <!-- 1. LEFT: LOGO -->
     <a th:href="@{/}" style="
         text-decoration: none;
         font-size: 2em;
@@ -23,7 +24,7 @@
         PULSE<span style="color: #cc0000;">.</span>
     </a>
 
-    <!-- Search -->
+    <!-- 2. MIDDLE: SEARCH BAR -->
     <form th:action="@{/search}" method="get" style="
         display: flex;
         flex-grow: 1;
@@ -47,33 +48,49 @@
         </button>
     </form>
 
-    <!-- RIGHT SIDE: LINKS -->
-    <div style="display: flex; gap: 20px; align-items: center;">
+    <!-- 3. RIGHT: NAVIGATION LINKS -->
+    <div style="display: flex; gap: 25px; align-items: center;">
 
-        <a th:href="@{/}" style="
-            color: white;
-            text-decoration: none;
-            font-size: 1.1em;
-            font-weight: 600;">
-            Home
-        </a>
+        <!-- Static Links (Always Visible) -->
+        <a th:href="@{/}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Home</a>
 
-        <!-- Cart link -->
-        <a th:href="@{/cart/view}" style="
-            color: white;
-            text-decoration: none;
-            font-size: 1.1em;
-            font-weight: 600;">
-            🛒 Cart
-        </a>
+        <a th:href="@{/cart/view}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">🛒</a>
 
-        <a th:href="@{/login}" style="
-            color: #cc0000;
-            text-decoration: none;
-            font-size: 1.1em;
-            font-weight: 700;">
-            Login
-        </a>
+        <a th:href="@{/order/view}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Orders</a>
+
+        <a th:href="@{/support/my-tickets}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Support</a>
+
+        <!-- AUTHENTICATION TOGGLE -->
+
+        <!-- Case A: User is Logged In -> Show Logout -->
+        <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="margin: 0;">
+                <button type="submit" style="
+                    background: none;
+                    border: none;
+                    color: #cc0000;
+                    font-size: 1.1em;
+                    font-weight: 700;
+                    cursor: pointer;
+                    padding: 0;
+                    text-decoration: none;
+                    font-family: inherit;">
+                    Logout
+                </button>
+            </form>
+        </div>
+
+        <!-- Case B: User is Anonymous -> Show Login -->
+        <div sec:authorize="isAnonymous()">
+            <a th:href="@{/login}" style="
+                color: #cc0000;
+                text-decoration: none;
+                font-size: 1.1em;
+                font-weight: 700;">
+                Login
+            </a>
+        </div>
+
     </div>
 
 </nav>

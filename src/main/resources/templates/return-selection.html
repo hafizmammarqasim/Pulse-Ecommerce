@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Return Items | Pulse</title>
+    <style>
+        :root { --bg-black: #121212; --bg-dark: #1e1e1e; --brand-red: #cc0000; --text-white: #ffffff; --border: #333; }
+        body { background-color: var(--bg-black); color: var(--text-white); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+
+        .container { max-width: 800px; margin: 40px auto; }
+
+        h1 { border-left: 6px solid var(--brand-red); padding-left: 15px; margin-bottom: 30px; text-transform: uppercase; }
+
+        .return-card {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            gap: 20px;
+            transition: background 0.2s;
+        }
+
+        .item-row:hover { background-color: #252525; }
+
+        /* Custom Checkbox Size */
+        .item-checkbox { transform: scale(1.5); accent-color: var(--brand-red); cursor: pointer; }
+
+        .item-info { flex-grow: 1; }
+        .item-name { font-weight: 700; font-size: 1.1rem; display: block; color: var(--text-white); }
+        .item-meta { color: #888; font-size: 0.9rem; }
+
+        .qty-wrapper { display: flex; align-items: center; gap: 10px; }
+        .qty-input {
+            width: 60px; padding: 5px; background: #333; border: 1px solid #555;
+            color: white; border-radius: 4px; text-align: center; font-weight: bold;
+        }
+
+        .reason-box { margin-top: 30px; }
+        .reason-input {
+            width: 100%; background: #2a2a2a; border: 1px solid var(--border);
+            color: white; padding: 15px; border-radius: 6px; margin-top: 10px;
+            font-family: inherit;
+        }
+        .reason-input:focus { outline: none; border-color: var(--brand-red); }
+
+        .btn-submit {
+            width: 100%; background-color: var(--brand-red); color: white; padding: 15px;
+            font-weight: 800; text-transform: uppercase; border: none; border-radius: 6px;
+            cursor: pointer; margin-top: 30px; transition: background 0.3s;
+        }
+        .btn-submit:hover { background-color: #aa0000; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+    <h1>Select Items to Return</h1>
+
+    <!-- IMPORTANT: object must be 'returnForm' -->
+    <form th:action="@{/return/submit}" th:object="${returnForm}" method="post">
+
+        <!-- HIDDEN: Pass the Order ID back to controller -->
+        <input type="hidden" th:field="*{orderId}">
+
+        <div class="return-card">
+            <p style="color: #bbb; margin-bottom: 20px;">
+                Please select the items you wish to return from Order #<span th:text="*{orderId}"></span>
+            </p>
+
+            <!-- ITEM LIST LOOP -->
+            <!-- CRITICAL FIX: Use 'returnItems' (the list name in DTO) and 'stat' for index -->
+            <div th:each="item, stat : *{returnItems}" class="item-row">
+
+                <!-- 1. CHECKBOX (Binds to boolean 'selected') -->
+                <!-- The weird syntax *{returnItems[__${stat.index}__].selected} is REQUIRED for lists -->
+                <input type="checkbox" class="item-checkbox"
+                       th:field="*{returnItems[__${stat.index}__].selected}">
+
+                <!-- HIDDEN FIELDS: We must send IDs back so we know which item is which -->
+                <input type="hidden" th:field="*{returnItems[__${stat.index}__].orderItemId}">
+
+                <!-- We also send back display names just in case validation fails and page reloads -->
+                <input type="hidden" th:field="*{returnItems[__${stat.index}__].productName}">
+
+                <!-- 2. INFO DISPLAY -->
+                <div class="item-info">
+                    <span class="item-name" th:text="${item.productName}">Product Name</span>
+                    <div class="item-meta">
+                        <span th:text="${item.variantColor}">Color</span>
+                        <span th:if="${item.variantType != null}" th:text="' | ' + ${item.variantType}"></span>
+                    </div>
+                </div>
+
+                <!-- 3. QUANTITY INPUT -->
+                <div class="qty-wrapper">
+                    <label style="font-size: 0.8rem; color: #888;">Return Qty:</label>
+                    <input type="number" class="qty-input"
+                           th:field="*{returnItems[__${stat.index}__].returnQuantity}"
+                           min="1" th:max="${item.maxQuantity}">
+                    <span style="font-size: 0.8rem; color: #555;" th:text="'/ ' + ${item.maxQuantity}"></span>
+                </div>
+            </div>
+
+            <!-- REASON AREA -->
+            <div class="reason-box">
+                <label style="font-weight: 700; color: #ddd;">Reason for Return</label>
+                <textarea class="reason-input" th:field="*{reason}" rows="4"
+                          placeholder="Please tell us why you are returning these items (e.g. Defective, Wrong Color)..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Submit Request</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

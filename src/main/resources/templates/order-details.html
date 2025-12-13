@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Details | Pulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- PULSE THEME --- */
+        :root {
+            --bg-black: #121212;
+            --bg-dark: #1e1e1e;
+            --brand-red: #cc0000;
+            --text-white: #ffffff;
+            --text-gray: #b3b3b3;
+            --border-color: #333;
+        }
+
+        body { background-color: var(--bg-black); color: var(--text-white); font-family: 'Segoe UI', sans-serif; margin: 0; }
+
+        .container { max-width: 1000px; margin: 50px auto; padding: 20px; }
+
+        /* --- HEADER LAYOUT (FIXED) --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; /* Aligns the button with the bottom of the text group */
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 25px;
+        }
+
+        /* Group Title and Back Link vertically */
+        .header-left {
+            display: flex;
+            flex-direction: column; /* Stack them */
+            gap: 10px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            border-left: 6px solid var(--brand-red);
+            padding-left: 15px;
+            line-height: 1;
+        }
+
+        /* The Back Link (Lower Left position) */
+        .back-link {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 21px; /* Aligns with the text inside H1 (skips the red border) */
+            transition: transform 0.2s, color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--text-white);
+            transform: translateX(-5px); /* Slides left slightly on hover */
+        }
+
+        .back-link i { font-size: 0.7rem; }
+
+        /* --- INFO GRID --- */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+        .info-card { background: var(--bg-dark); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .info-title { color: var(--text-gray); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
+        .info-content { font-size: 1.05rem; line-height: 1.6; }
+
+        /* --- ITEMS TABLE --- */
+        .items-card { background: var(--bg-dark); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; margin-bottom: 30px; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #333; }
+        .item-row:last-child { border-bottom: none; }
+
+        .item-left { display: flex; gap: 20px; align-items: center; }
+        .item-img { width: 70px; height: 70px; background: white; border-radius: 6px; object-fit: contain; padding: 5px; }
+        .item-name { font-weight: 700; display: block; font-size: 1.1rem; margin-bottom: 4px; }
+        .item-meta { color: var(--text-gray); font-size: 0.9rem; }
+
+        /* --- BUTTONS --- */
+        .btn-return {
+            background-color: transparent;
+            border: 1px solid var(--brand-red);
+            color: var(--brand-red);
+            padding: 12px 25px;
+            border-radius: 4px;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        .btn-return:hover {
+            background-color: var(--brand-red);
+            color: white;
+            box-shadow: 0 0 15px rgba(204, 0, 0, 0.4);
+        }
+
+        /* STATUS BADGES */
+        .badge {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-block;
+            border: 1px solid transparent;
+            letter-spacing: 1px;
+        }
+
+        .status-REQUESTED { background: rgba(111, 66, 193, 0.15); color: #b185f7; border-color: #b185f7; }
+
+        .not-delivered-msg {
+            font-size: 0.85rem;
+            color: #555;
+            font-style: italic;
+            padding-bottom: 5px;
+        }
+
+        /* --- TOTAL SECTION --- */
+        .summary-section {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+        .summary-box { text-align: right; }
+        .total-label { color: var(--text-gray); font-size: 1.2rem; margin-right: 15px; }
+        .total-price { font-size: 2rem; color: var(--brand-red); font-weight: 800; }
+
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+
+        <!-- LEFT: Title stacked ON TOP of Back Link -->
+        <div class="header-left">
+            <h1 th:text="'Order #' + ${order.id}">Order #501</h1>
+
+            <a href="/order/view" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+        </div>
+
+        <!-- RIGHT: ACTIONS -->
+        <div class="header-actions">
+
+            <!-- CASE A: Eligible for Return -->
+            <div th:if="${order.status == 'DELIVERED' and activeReturn == null}">
+                <a th:href="@{/support/return/initiate/{orderId}(orderId=${order.id})}"
+                   class="btn-return">
+                    Request Return
+                </a>
+            </div>
+
+            <!-- CASE B: Return Already Active -->
+            <div th:if="${activeReturn != null}">
+                <span class="badge"
+                      th:classappend="'status-' + ${activeReturn.status}"
+                      th:text="'RETURN ' + ${activeReturn.status}">
+                      RETURN REQUESTED
+                </span>
+            </div>
+
+            <!-- CASE C: Not Delivered Yet -->
+            <div th:if="${order.status != 'DELIVERED'}" class="not-delivered-msg">
+                Return available after delivery
+            </div>
+
+        </div>
+    </div>
+
+    <!-- INFO GRID -->
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-title">Shipping Details</div>
+            <div class="info-content">
+                <strong th:text="${order.delivery.firstName} + ' ' + ${order.delivery.lastName}">Ali Khan</strong><br>
+                <span th:text="${order.delivery.phone}">0300-1234567</span><br>
+                <span th:text="${order.delivery.addressLine} + ', ' + ${order.delivery.city}">123 Street, Lahore</span><br>
+                <br>
+                <span style="color: #666; font-size: 0.9rem;">Courier:</span>
+                <span th:text="${order.courierName != null ? order.courierName : 'Pending Assignment'}" style="color: var(--text-white);">TCS</span>
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="info-title">Order Summary</div>
+            <div class="info-content">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: var(--text-gray);">Status:</span>
+                    <strong th:text="${order.status}" style="color: var(--brand-red);">DELIVERED</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: var(--text-gray);">Placed on:</span>
+                    <span th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy')}">12 Dec</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-gray);">Payment:</span>
+                    <span th:text="${order.paymentMethod}">COD</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ITEMS LIST -->
+    <h3 style="margin-bottom: 20px; color: var(--text-white); font-size: 1.2rem; border-left: 4px solid var(--brand-red); padding-left: 10px;">Items Ordered</h3>
+
+    <div class="items-card">
+        <div class="item-row" th:each="item : ${order.items}">
+            <div class="item-left">
+                <img th:src="@{/images/tempImage.avif}" class="item-img">
+                <div>
+                    <span class="item-name" th:text="${item.variant.product.name}">Product Name</span>
+                    <div class="item-meta">
+                        Color: <span th:text="${item.variant.color}">Black</span> &nbsp;|&nbsp;
+                        Qty: <span th:text="${item.quantity}">1</span> &nbsp;|&nbsp;
+                        Price: <span th:text="'Rs. ' + ${item.unitPrice}">5000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL TOTAL -->
+    <div class="summary-section">
+        <div class="summary-box">
+            <span class="total-label">Grand Total:</span>
+            <span class="total-price" th:text="'Rs. ' + ${order.totalAmount}">Rs. 5000</span>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

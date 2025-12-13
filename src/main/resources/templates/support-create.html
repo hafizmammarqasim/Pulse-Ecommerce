@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Support | Pulse</title>
+    <style>
+        /* --- PULSE THEME VARIABLES --- */
+        :root {
+            --bg-black: #121212;
+            --bg-dark: #1e1e1e;
+            --bg-card: #252525;
+            --brand-red: #cc0000;
+            --text-white: #ffffff;
+            --text-gray: #b3b3b3;
+            --border-color: #333;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        /* --- CARD DESIGN --- */
+        .form-card {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* --- HEADER --- */
+        h2 {
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 5px solid var(--brand-red);
+            padding-left: 15px;
+        }
+
+        /* --- FORM ELEMENTS --- */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-gray);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        /* Input Styling */
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            background-color: #2a2a2a;
+            border: 1px solid var(--border-color);
+            color: var(--text-white);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--brand-red);
+            box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
+        }
+
+        /* Readonly Field Styling (Locked) */
+        .locked-input {
+            background-color: #151515 !important;
+            color: #777 !important;
+            cursor: not-allowed;
+            border-color: #222;
+        }
+
+        /* Note text */
+        .note {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* --- SUBMIT BUTTON --- */
+        .btn-submit {
+            width: 100%;
+            background-color: var(--brand-red);
+            color: white;
+            padding: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #aa0000;
+            transform: translateY(-2px);
+        }
+
+        /* Link back */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { color: var(--text-white); }
+
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container">
+    <div class="form-card">
+
+        <!-- Header changes based on context -->
+        <h2 th:text="${isLocked} ? 'Request ' + ${preType} : 'Contact Support'">Contact Support</h2>
+
+        <form action="/support/save" method="post" th:object="${ticket}">
+
+            <!-- HIDDEN FIELDS (To link Order if exists) -->
+            <!-- Note: We use 'param' to access URL params or model attributes directly if object binding is tricky -->
+            <input type="hidden" name="orderId" th:value="${preOrderId}">
+
+            <!-- 1. TICKET TYPE -->
+            <div class="form-group">
+                <label>Issue Type</label>
+
+                <!-- SCENARIO A: LOCKED (e.g. Cancellation) -->
+                <div th:if="${isLocked}">
+                    <input type="text" class="locked-input" th:value="${preType}" readonly>
+                    <!-- We must send the value hiddenly because readonly/disabled selects sometimes don't submit -->
+                    <input type="hidden" name="type" th:value="${preType}">
+                </div>
+
+                <!-- SCENARIO B: UNLOCKED (Contact Us) -->
+                <div th:unless="${isLocked}">
+                    <select name="type">
+                        <option value="COMPLAINT">Complaint</option>
+                        <option value="INQUIRY">General Inquiry</option>
+                        <option value="WARRANTY">Warranty Claim</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 2. SUBJECT -->
+            <div class="form-group">
+                <label>Subject</label>
+                <!-- If Order ID exists, pre-fill the subject -->
+                <input type="text" name="subject"
+                       th:value="${preOrderId != null ? preType + ' Request for Order #' + preOrderId : ''}"
+                       placeholder="Brief summary of your issue..." required>
+            </div>
+
+            <!-- 3. DESCRIPTION -->
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="6"
+                          placeholder="Please describe your issue in detail so our team can help you..." required></textarea>
+
+                <div class="note" th:if="${preOrderId != null}">
+                    Linked to Order ID: #<span th:text="${preOrderId}"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Submit Request</button>
+
+            <a href="/" class="back-link">Cancel and Return Home</a>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

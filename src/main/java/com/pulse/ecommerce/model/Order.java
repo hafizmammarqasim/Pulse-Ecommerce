@@ -88,4 +88,9 @@ public class Order {
 
     public String getCourierName() { return courierName; }
     public void setCourierName(String courierName) { this.courierName = courierName; }
+
+    public Order(){
+
+    }
+
 }
