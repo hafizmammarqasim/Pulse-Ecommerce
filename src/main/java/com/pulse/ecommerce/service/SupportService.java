@@ -123,10 +123,6 @@ public class SupportService {
        if (!hasItems) {
            throw new IllegalArgumentException("No items selected for return");
        }
-
-       // Optional: Update ticket with return link if you kept that column
-       // savedTicket.setOrderReturn(savedReturn);
-       // supportTicketRepo.save(savedTicket);
    }
 
    public boolean returnAlreadyExists(Long orderId){

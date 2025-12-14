@@ -9,5 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, Long> {
 
+    long countByStockQuantityLessThan(int stockLevel);
+
 }
 

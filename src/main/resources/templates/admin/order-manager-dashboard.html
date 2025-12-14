@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Dashboard | Pulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- COPY/PASTE THE SAME CSS FROM YOUR OTHER ADMIN DASHBOARD --- */
+        :root { --bg-black: #121212; --bg-dark: #1e1e1e; --brand-red: #cc0000; --text-white: #ffffff; --text-gray: #b3b3b3; --border-color: #333; }
+        body { background-color: var(--bg-black); color: var(--text-white); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 250px; background-color: var(--bg-dark); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .logo { font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 40px; }
+        .logo span { color: var(--brand-red); }
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+        .nav-link { display: flex; align-items: center; gap: 15px; color: var(--text-gray); text-decoration: none; padding: 12px 15px; border-radius: 6px; font-weight: 600; margin-bottom: 5px; transition: all 0.2s; }
+        .nav-link.active, .nav-link:hover { background-color: var(--brand-red); color: white; }
+        .nav-link i { width: 20px; text-align: center; }
+        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        h1 { font-size: 2rem; margin: 0 0 10px 0; }
+        .page-subtitle { color: var(--text-gray); margin-bottom: 30px; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px; }
+        .kpi-card { background-color: var(--bg-dark); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .kpi-label { font-size: 0.9rem; color: var(--text-gray); }
+        .kpi-value { font-size: 2.5rem; font-weight: 800; color: var(--text-white); }
+        .kpi-value.red { color: var(--brand-red); }
+        h2 { font-size: 1.5rem; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+        .table-wrapper { background-color: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .dashboard-table { width: 100%; border-collapse: collapse; }
+        .dashboard-table th { text-align: left; padding: 15px; background-color: #2a2a2a; font-size: 0.8rem; text-transform: uppercase; color: var(--text-gray); }
+        .dashboard-table td { padding: 15px; border-top: 1px solid var(--border-color); }
+        .btn-action { background: #444; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold; }
+        .btn-action:hover { background: var(--brand-red); }
+
+        /* Logout button specific styles */
+        .logout-section { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .logout-button { width: 100%; background: none; border: none; text-align: left; padding: 12px 15px; border-radius: 6px; color: var(--text-gray); font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 15px; }
+        .logout-button:hover { background-color: #444; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">PULSE<span>.</span> OM</div>
+    <ul class="nav-menu">
+        <li><a href="/admin/dashboard" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="/admin/orders" class="nav-link"><i class="fas fa-box-open"></i> Orders</a></li>
+        <li><a href="/admin/returns" class="nav-link"><i class="fas fa-undo"></i> Returns</a></li>
+        <li><a href="/admin/support" class="nav-link"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+
+    <div class="logout-section">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-button">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="main-content">
+
+    <h1>Order Manager Dashboard</h1>
+    <p class="page-subtitle">Manage fulfillment, returns, and customer support.</p>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-label">Pending Orders</div>
+            <div class="kpi-value red" th:text="${stats.pendingOrders}">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Return Requests</div>
+            <div class="kpi-value" th:text="${stats.returnRequests}">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Open Support Tickets</div>
+            <div class="kpi-value" th:text="${stats.openTickets}">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Total Orders</div>
+            <div class="kpi-value" th:text="${stats.totalOrders}">0</div>
+        </div>
+    </div>
+
+    <h2>Recent Pending Orders</h2>
+    <div class="table-wrapper">
+        <table class="dashboard-table">
+            <thead>
+            <tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>#502</td>
+                <td>ali.k@email.com</td>
+                <td>12 Dec 2025</td>
+                <td>Rs. 9000.00</td>
+                <td><a href="#" class="btn-action">Process</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

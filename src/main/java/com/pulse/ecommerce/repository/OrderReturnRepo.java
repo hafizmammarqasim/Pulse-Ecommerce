@@ -10,4 +10,7 @@ public interface OrderReturnRepo extends JpaRepository<OrderReturn,Long> {
     OrderReturn findByOrder(Order order);
 
     boolean existsByOrderAndStatus(Order order, ReturnStatus returnStatus);
+
+    long countByStatus(ReturnStatus status);
+
 }
