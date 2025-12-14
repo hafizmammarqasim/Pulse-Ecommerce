@@ -94,5 +94,47 @@ public class SupportController {
         supportService.submitReturnRequest(form,user);
         return "return-selection-success";
     }
+
+                        // ==========================================
+                        //          CANCEL ORDER CONTROLLER         //
+                        // ==========================================
+    @GetMapping("/cancel/initiate/{orderId}")
+    public String initiateCancel(@PathVariable Long orderId, Model model) {
+        UserRecord user = authService.getCurrentUser();
+        if(user == null) return "redirect:/login";
+
+        // 1. Ticket Object with Defaults
+        SupportTicket ticket = new SupportTicket();
+        ticket.setType(TicketType.CANCELLATION); // Auto-select Type
+        ticket.setSubject("Cancellation Request - Order #" + orderId); // Auto-fill Subject
+
+        // 2. Flags for the HTML
+        model.addAttribute("preOrderId", orderId);
+        model.addAttribute("preType", "CANCELLATION");
+        model.addAttribute("isLocked", true); // This triggers the "Read-Only" mode
+
+        // 3. Passing the pre-filled ticket
+        model.addAttribute("ticket", ticket);
+
+        return "support-create";
+    }
+
+    @PostMapping("/cancel/submit")
+    public String submitCancel(@RequestParam Long orderId,
+                               @RequestParam String description,
+                               Model model) {
+
+        UserRecord user = authService.getCurrentUser();
+        if(user == null) return "redirect:/login";
+
+        try {
+            // Call the service to do the heavy lifting
+            orderService.cancelOrder(orderId, description, user);
+            return "redirect:/order/view?success=cancelled";
+        } catch (IllegalStateException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error-page";
+        }
+    }
 }
 

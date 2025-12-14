@@ -101,6 +101,57 @@
             box-shadow: 0 0 15px rgba(204, 0, 0, 0.4);
         }
 
+        /* Active Cancel Button */
+.btn-cancel {
+    background-color: transparent;
+    border: 1px solid #dc3545; /* Red border */
+    color: #dc3545;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.2s;
+    display: inline-block;
+    margin-right: 10px;
+}
+.btn-cancel:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Disabled/Blurred Text */
+.btn-disabled {
+    color: #555; /* Dark Gray */
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 1px solid #333;
+    border-radius: 4px;
+    cursor: not-allowed;
+    opacity: 0.6;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* CANCELLED STATUS BADGE */
+        .badge.status-CANCELLED {
+            background: rgba(108, 117, 125, 0.15); /* Gray */
+            color: #6c757d;
+            border-color: #6c757d;
+            letter-spacing: 0;
+        }
+
+        /* Group the action buttons vertically */
+        .actions-group {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 10px;
+            align-items: flex-end;
+        }
+
         /* STATUS BADGES */
         .badge {
             padding: 10px 20px;
@@ -147,39 +198,60 @@
         <!-- LEFT: Title stacked ON TOP of Back Link -->
         <div class="header-left">
             <h1 th:text="'Order #' + ${order.id}">Order #501</h1>
-
             <a href="/order/view" class="back-link">
-                <i class="fas fa-arrow-left"></i> Back to Orders
+                <i class="fas fa-arrow-left"></i> Back to Order History
             </a>
         </div>
 
-        <!-- RIGHT: ACTIONS -->
+        <!-- RIGHT: ALL ACTION LOGIC IS HERE -->
         <div class="header-actions">
 
-            <!-- CASE A: Eligible for Return -->
-            <div th:if="${order.status == 'DELIVERED' and activeReturn == null}">
-                <a th:href="@{/support/return/initiate/{orderId}(orderId=${order.id})}"
-                   class="btn-return">
-                    Request Return
-                </a>
-            </div>
+            <!-- We create a group for vertical alignment if needed -->
+            <div class="actions-group">
 
-            <!-- CASE B: Return Already Active -->
-            <div th:if="${activeReturn != null}">
-                <span class="badge"
-                      th:classappend="'status-' + ${activeReturn.status}"
-                      th:text="'RETURN ' + ${activeReturn.status}">
-                      RETURN REQUESTED
-                </span>
-            </div>
+                <!-- SCENARIO 1: Order is PENDING (Cancellable) -->
+                <div th:if="${order.status == 'PENDING'}">
+                    <a th:href="@{/cancel/initiate/{id}(id=${order.id})}"
+                       class="btn-cancel">
+                        Cancel Order
+                    </a>
+                </div>
 
-            <!-- CASE C: Not Delivered Yet -->
-            <div th:if="${order.status != 'DELIVERED'}" class="not-delivered-msg">
-                Return available after delivery
+                <!-- SCENARIO 2: Order is DELIVERED -->
+                <div th:if="${order.status == 'DELIVERED'}">
+                    <!-- Case A: Eligible for Return -->
+                    <div th:if="${activeReturn == null}">
+                        <a th:href="@{/return/initiate/{orderId}(orderId=${order.id})}"
+                           class="btn-return">
+                            Request Return
+                        </a>
+                    </div>
+                    <!-- Case B: Return Already Active -->
+                    <div th:if="${activeReturn != null}">
+                        <span class="badge"
+                              th:classappend="'status-' + ${activeReturn.status}"
+                              th:text="'RETURN ' + ${activeReturn.status}">
+                              RETURN REQUESTED
+                        </span>
+                    </div>
+                </div>
+
+                <!-- SCENARIO 3: Already Cancelled (Show Badge) -->
+                <div th:if="${order.status == 'CANCELLED'}">
+                    <span class="badge status-CANCELLED">ORDER CANCELLED</span>
+                </div>
+
+                <!-- SCENARIO 4: Shipped (Cannot Cancel) -->
+                <div th:if="${order.status == 'SHIPPED'}">
+                    <span class="btn-disabled" title="Order has already been shipped">
+                        Cancel Order
+                    </span>
+                </div>
             </div>
 
         </div>
     </div>
+
 
     <!-- INFO GRID -->
     <div class="info-grid">
