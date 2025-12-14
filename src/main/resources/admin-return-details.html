@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Manage Return | Admin</title>
+  <!-- Use same CSS -->
+</head>
+<body>
+<div th:replace="~{admin/fragments/admin-layout :: sidebar}"></div>
+<div class="main-content">
+  <h1 th:text="'Manage Return #' + ${returnRequest.id}"></h1>
+  code
+  Code
+  <div class="grid-container">
+    <!-- LEFT: Info -->
+    <div>
+      <div class="card" style="margin-bottom: 20px;">
+        <h3 class="card-title">Customer Reason</h3>
+        <p th:text="${returnRequest.supportTicket.description}"></p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Items to Return</h3>
+        <div th:each="item : ${returnRequest.returnItems}" class="item-row">
+          <img th:src="@{/images/tempImage.avif}" class="item-img">
+          <div>
+            <strong th:text="${item.orderItem.variant.product.name}"></strong><br>
+            <small style="color:#888;" th:text="'Qty: ' + ${item.quantity}"></small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Actions -->
+    <div class="card">
+      <h3 class="card-title">Actions</h3>
+
+      <!-- Only show if status is REQUESTED -->
+      <div th:if="${returnRequest.status.name() == 'REQUESTED'}">
+        <p>Review the customer's reason and the items. Approve to proceed with the return, or Reject to close the ticket.</p>
+        <form action="/admin/returns/approve" method="post" style="display:inline-block;">
+          <input type="hidden" name="returnId" th:value="${returnRequest.id}">
+          <button type="submit" style="background: #28a745; color: white;">Approve Return</button>
+        </form>
+        <form action="/admin/returns/reject" method="post" style="display:inline-block;">
+          <input type="hidden" name="returnId" th:value="${returnRequest.id}">
+          <button type="submit" style="background: #dc3545; color: white;">Reject Return</button>
+        </form>
+      </div>
+
+      <!-- Only show if status is APPROVED -->
+      <div th:if="${returnRequest.status.name() == 'APPROVED'}">
+        <p>Waiting for the item to be physically returned to the warehouse. Once received, click below to restock.</p>
+        <form action="/admin/returns/receive" method="post">
+          <input type="hidden" name="returnId" th:value="${returnRequest.id}">
+          <button type="submit" class="btn-submit">Mark as Received & Restock</button>
+        </form>
+      </div>
+
+      <!-- More statuses like 'RECEIVED' can be added here -->
+    </div>
+  </div>
+</div>
+</body>
+</html>

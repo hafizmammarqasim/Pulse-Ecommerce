@@ -1,9 +1,6 @@
 package com.pulse.ecommerce.repository;
 
-import com.pulse.ecommerce.model.Order;
-import com.pulse.ecommerce.model.SupportTicket;
-import com.pulse.ecommerce.model.TicketStatus;
-import com.pulse.ecommerce.model.UserRecord;
+import com.pulse.ecommerce.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +16,19 @@ public interface SupportTicketRepo extends JpaRepository<SupportTicket,Long> {
 
 
     long countByStatus(TicketStatus status);
+
+    // Finds tickets that are NOT a specific type (e.g., show me everything BUT returns)
+    List<SupportTicket> findByTypeNot(TicketType type);
+
+    // Finds tickets by a specific status
+    List<SupportTicket> findByStatus(TicketStatus status);
+
+    // Finds tickets by a specific type
+    List<SupportTicket> findByType(TicketType type);
+
+    List<SupportTicket> findByTypeNotAndStatus(TicketType type, TicketStatus status);
+
+    List<SupportTicket> findByStatusOrderByCreatedAtDesc(TicketStatus status);
 
 }
 

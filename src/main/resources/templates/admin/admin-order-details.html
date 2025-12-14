@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Order | Pulse</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* --- PULSE ADMIN THEME --- */
+    :root {
+        --bg-black: #121212;
+        --bg-dark: #1e1e1e;
+        --brand-red: #cc0000;
+        --text-white: #ffffff;
+        --text-gray: #b3b3b3;
+        --border-color: #333;
+    }
+
+    body {
+        background-color: var(--bg-black);
+        color: var(--text-white);
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+        width: 250px;
+        background-color: var(--bg-dark);
+        border-right: 1px solid var(--border-color);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 40px;
+        color: white;
+        text-decoration: none;
+    }
+    .logo span { color: var(--brand-red); }
+
+    .nav-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: var(--text-gray);
+        text-decoration: none;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        transition: all 0.2s;
+    }
+    .nav-link:hover {
+        background-color: var(--brand-red);
+        color: white;
+    }
+    .nav-link i { width: 20px; text-align: center; }
+
+    .logout-section {
+        margin-top: auto; /* Pushes to the bottom */
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+    .logout-button {
+        width: 100%;
+        background: none;
+        border: none;
+        text-align: left;
+        padding: 12px 15px;
+        border-radius: 6px;
+        color: var(--text-gray);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-family: inherit;
+        font-size: 1rem;
+    }
+    .logout-button:hover {
+        background-color: #444;
+        color: white;
+    }
+
+    /* --- MAIN CONTENT --- */
+    .main-content {
+        flex-grow: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
+
+    h1 {
+        border-left: 5px solid var(--brand-red);
+        padding-left: 15px;
+        margin-bottom: 30px;
+        font-size: 2rem;
+        text-transform: uppercase;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+    }
+
+    .card {
+        background: var(--bg-dark);
+        padding: 25px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        margin-top: 0;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+    }
+
+    /* Items List Styling */
+    .item-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #2a2a2a;
+    }
+    .item-row:last-child { border-bottom: none; }
+    .item-img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        background: white;
+        border-radius: 4px;
+        padding: 5px;
+    }
+    .item-name { font-weight: bold; }
+    .item-meta { font-size: 0.85rem; color: var(--text-gray); }
+
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-gray);
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        background: #2a2a2a;
+        border: 1px solid var(--border-color);
+        color: white;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+    input:focus, select:focus {
+        outline: none;
+        border-color: var(--brand-red);
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: var(--brand-red);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: 0.3s;
+    }
+    .btn-submit:hover { background: #aa0000; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR (Copy this block into every admin page) -->
+<div class="sidebar">
+  <a href="/admin/dashboard" class="logo">PULSE<span>.</span> OM</a>
+  <ul class="nav-menu">
+    <li><a href="/admin/dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+    <li><a href="/admin/orders" class="nav-link"><i class="fas fa-box-open"></i> Orders</a></li>
+    <li><a href="/admin/returns" class="nav-link"><i class="fas fa-undo"></i> Returns</a></li>
+    <li><a href="/admin/support" class="nav-link"><i class="fas fa-life-ring"></i> Support</a></li>
+  </ul>
+
+  <div class="logout-section">
+    <form th-action="@{/logout}" method="post">
+      <button type="submit" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+  <h1 th:text="'Manage Order #' + ${order.id}">Manage Order #502</h1>
+
+  <div class="grid-container">
+
+    <!-- LEFT COLUMN: Order Details -->
+    <div>
+      <!-- Items Card -->
+      <div class="card" style="margin-bottom: 30px;">
+        <h3 class="card-title">Items in Order</h3>
+
+        <div th:each="item : ${order.items}" class="item-row">
+          <img th:src="@{/images/tempImage.avif}" class="item-img">
+          <div>
+            <strong class="item-name" th:text="${item.variant.product.name}">Product Name</strong>
+            <div class="item-meta" th:text="${item.variant.color} + ' | Qty: ' + ${item.quantity} + ' | Rs. ' + ${item.unitPrice}">
+              Black | Qty: 1 | Rs. 9000.00
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping Card -->
+      <div class="card">
+        <h3 class="card-title">Shipping Information</h3>
+        <strong th:text="${order.delivery.firstName} + ' ' + ${order.delivery.lastName}">Ammar Qasim</strong><br>
+        <span th:text="${order.delivery.phone}">03218872830</span><br>
+        <span th:text="${order.delivery.addressLine} + ', ' + ${order.delivery.city}">71 Main Bazar, Lahore</span>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Action Form -->
+    <div class="card">
+      <h3 class="card-title">Update Status</h3>
+      <form action="/admin/orders/update" method="post">
+        <input type="hidden" name="orderId" th:value="${order.id}">
+
+        <div class="form-group">
+          <label>Order Status</label>
+          <select name="status">
+            <option th:selected="${order.status == 'PENDING'}" value="PENDING">Pending</option>
+            <option th:selected="${order.status == 'PROCESSING'}" value="PROCESSING">Processing</option>
+            <option th:selected="${order.status == 'SHIPPED'}" value="SHIPPED">Shipped</option>
+            <option th:selected="${order.status == 'DELIVERED'}" value="DELIVERED">Delivered</option>
+            <option th:selected="${order.status == 'CANCELLED'}" value="CANCELLED">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Courier Name</label>
+          <input type="text" name="courierName" th:value="${order.courierName}" placeholder="e.g. TCS, Leopards">
+        </div>
+
+        <button type="submit" class="btn-submit">Update Order</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

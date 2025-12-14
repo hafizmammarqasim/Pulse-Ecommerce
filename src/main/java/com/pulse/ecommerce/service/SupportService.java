@@ -134,5 +134,26 @@ public class SupportService {
        return orderReturnRepo.existsByOrderAndStatus(order, ReturnStatus.APPROVED);
    }
 
+    // Get a list of tickets based on their status
+    public List<SupportTicket> findTicketsByStatus(TicketStatus status) {
+        // Find by status and sort by newest first
+        return supportTicketRepo.findByStatusOrderByCreatedAtDesc(status);
+    }
+
+    // Get a single ticket by its ID
+    public SupportTicket findTicketById(Long id) {
+        return supportTicketRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Support Ticket not found with ID: " + id));
+    }
+
+    // Update the status of a ticket
+    @Transactional
+    public void updateTicketStatus(Long ticketId, TicketStatus newStatus) {
+        SupportTicket ticket = findTicketById(ticketId);
+        ticket.setStatus(newStatus);
+        supportTicketRepo.save(ticket);
+    }
+
+
 
 }

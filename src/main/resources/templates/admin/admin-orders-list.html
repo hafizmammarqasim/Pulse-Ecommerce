@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Orders | Pulse Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- PULSE ADMIN THEME --- */
+        :root {
+            --bg-black: #121212;
+            --bg-dark: #1e1e1e;
+            --brand-red: #cc0000;
+            --text-white: #ffffff;
+            --text-gray: #b3b3b3;
+            --border-color: #333;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR (Matching Dashboard) --- */
+        .sidebar {
+            width: 250px;
+            background-color: var(--bg-dark);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            text-decoration: none;
+        }
+        .logo span { color: var(--brand-red); }
+
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-gray);
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+        }
+
+        .nav-link.active, .nav-link:hover {
+            background-color: var(--brand-red);
+            color: white;
+        }
+
+        .nav-link i { width: 20px; text-align: center; }
+
+        .logout-section { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .logout-button { width: 100%; background: none; border: none; text-align: left; padding: 12px 15px; border-radius: 6px; color: var(--text-gray); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 15px; font-family: inherit; font-size: 1rem; }
+        .logout-button:hover { background-color: #444; color: white; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 30px 0;
+            border-left: 5px solid var(--brand-red);
+            padding-left: 15px;
+        }
+
+        /* --- TABLE STYLES --- */
+        .table-wrapper {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dashboard-table th {
+            text-align: left;
+            padding: 15px 20px;
+            background-color: #2a2a2a;
+            color: var(--text-gray);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .dashboard-table td {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .dashboard-table tbody tr:hover {
+            background-color: #252525;
+        }
+
+        /* --- DYNAMIC STATUS BADGES (The Fix) --- */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+            border: 1px solid transparent;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .badge-PENDING { background: rgba(255, 193, 7, 0.15); color: #ffc107; border-color: #ffc107; }
+        .badge-SHIPPED { background: rgba(23, 162, 184, 0.15); color: #17a2b8; border-color: #17a2b8; }
+        .badge-DELIVERED { background: rgba(40, 167, 69, 0.15); color: #28a745; border-color: #28a745; }
+        .badge-PROCESSING { background: rgba(0, 123, 255, 0.15); color: #5aaaff; border-color: #007bff; }
+        .badge-CANCELLED { background: rgba(108, 117, 125, 0.15); color: #6c757d; border-color: #6c757d; text-decoration: line-through; }
+
+        .btn-action {
+            background: #444;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn-action:hover {
+            background: var(--brand-red);
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <a href="/admin/dashboard" class="logo">PULSE<span>.</span> OM</a>
+    <ul class="nav-menu">
+        <li><a href="/admin/dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="/admin/orders" class="nav-link active"><i class="fas fa-box-open"></i> Orders</a></li>
+        <li><a href="/admin/returns" class="nav-link"><i class="fas fa-undo"></i> Returns</a></li>
+        <li><a href="/admin/support" class="nav-link"><i class="fas fa-life-ring"></i> Support</a></li>
+    </ul>
+
+    <div class="logout-section">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-button">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <h1>All Orders</h1>
+    <!-- TABS to switch between Pending and Approved -->
+
+    <div class="table-wrapper">
+        <table class="dashboard-table">
+            <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Loop through all orders -->
+            <tr th:each="order : ${orders}">
+                <td th:text="'#' + ${order.id}">#501</td>
+                <td th:text="${order.customer.email}">customer@email.com</td>
+                <td th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy')}">Date</td>
+                <td th:text="'Rs. ' + ${order.totalAmount}">Amount</td>
+                <td>
+                    <!-- DYNAMIC BADGE -->
+                    <span class="badge"
+                          th:classappend="'badge-' + ${order.status}"
+                          th:text="${order.status}">Status</span>
+                </td>
+                <td>
+                    <a th:href="@{/admin/orders/manage/{id}(id=${order.id})}" class="btn-action">Manage</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

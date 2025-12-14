@@ -88,13 +88,25 @@
             <tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Total</th><th>Action</th></tr>
             </thead>
             <tbody>
-            <tr>
-                <td>#502</td>
-                <td>ali.k@email.com</td>
-                <td>12 Dec 2025</td>
-                <td>Rs. 9000.00</td>
-                <td><a href="#" class="btn-action">Process</a></td>
-            </tr>
+                <tr th:each="order : ${pendingOrders}">
+                    <td th:text="'#' + ${order.id}">#502</td>
+                    <td th:text="${order.customer.email}">customer@email.com</td>
+                    <td th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy')}">12 Dec 2025</td>
+                    <td th:text="'Rs. ' + ${order.totalAmount}">Rs. 9000.00</td>
+                    <td>
+                        <!-- This links to the manage page for this specific order -->
+                        <a th:href="@{/admin/orders/manage/{id}(id=${order.id})}" class="btn-action">
+                            Process
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- EMPTY STATE (Shows if there are no pending orders) -->
+                <tr th:if="${#lists.isEmpty(pendingOrders)}">
+                    <td colspan="5" style="text-align: center; color: var(--text-gray); padding: 30px;">
+                        No pending orders to process.
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Ticket | Pulse Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* --- PULSE ADMIN THEME --- */
+    :root {
+        --bg-black: #121212;
+        --bg-dark: #1e1e1e;
+        --brand-red: #cc0000;
+        --text-white: #ffffff;
+        --text-gray: #b3b3b3;
+        --border-color: #333;
+    }
+
+    body {
+        background-color: var(--bg-black);
+        color: var(--text-white);
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+        width: 250px;
+        background-color: var(--bg-dark);
+        border-right: 1px solid var(--border-color);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 40px;
+        color: white;
+        text-decoration: none;
+    }
+    .logo span { color: var(--brand-red); }
+
+    .nav-menu { list-style: none; padding: 0; margin: 0; }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: var(--text-gray);
+        text-decoration: none;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        transition: all 0.2s;
+    }
+    .nav-link.active, .nav-link:hover {
+        background-color: var(--brand-red);
+        color: white;
+    }
+    .nav-link i { width: 20px; text-align: center; }
+
+    .logout-section { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+    .logout-button { width: 100%; background: none; border: none; text-align: left; padding: 12px 15px; border-radius: 6px; color: var(--text-gray); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 15px; font-family: inherit; font-size: 1rem; }
+    .logout-button:hover { background-color: #444; color: white; }
+
+    /* --- MAIN CONTENT --- */
+    .main-content {
+        flex-grow: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
+
+    /* HEADER */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
+    }
+
+    .header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        text-transform: uppercase;
+        border-left: 6px solid var(--brand-red);
+        padding-left: 15px;
+        line-height: 1;
+    }
+
+    .back-link {
+        color: var(--text-gray);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding-left: 21px;
+        transition: color 0.2s;
+    }
+    .back-link:hover {
+        color: var(--text-white);
+    }
+    .back-link i { font-size: 0.7rem; }
+
+    /* Grid Layout */
+    .grid-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        align-items: start;
+    }
+    .card {
+        background: var(--bg-dark);
+        padding: 25px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .card-title {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-gray);
+        margin-top: 0;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+    }
+
+    .detail-item { margin-bottom: 20px; }
+    .detail-label {
+        font-size: 0.8rem;
+        color: #888;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 5px;
+    }
+    .detail-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+    }
+    .detail-value a {
+        color: var(--brand-red);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .detail-value a:hover { color: #ff3333; }
+
+    /* Form */
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 0.8rem; color: var(--text-gray); margin-bottom: 8px; text-transform: uppercase; }
+    select { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid var(--border-color); color: white; border-radius: 6px; font-size: 1rem; }
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: var(--brand-red);
+        color: white;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+        border-radius: 4px;
+        transition: 0.3s;
+    }
+    .btn-submit:hover { background-color: #aa0000; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <a href="/admin/dashboard" class="logo">PULSE<span>.</span> OM</a>
+  <ul class="nav-menu">
+    <li><a href="/admin/dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+    <li><a href="/admin/orders" class="nav-link"><i class="fas fa-box-open"></i> Orders</a></li>
+    <li><a href="/admin/returns" class="nav-link"><i class="fas fa-undo"></i> Returns</a></li>
+    <li><a href="/admin/support" class="nav-link active"><i class="fas fa-life-ring"></i> Support</a></li>
+  </ul>
+
+  <div class="logout-section">
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <div class="page-header">
+    <div class="header-left">
+      <h1 th:text="'Support Ticket #' + ${ticket.id}"></h1>
+      <a href="/admin/support" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Inbox
+      </a>
+    </div>
+  </div>
+
+  <div class="grid-container">
+
+    <!-- LEFT: Ticket Information -->
+    <div>
+      <div class="card" style="margin-bottom: 30px;">
+        <h3 class="card-title">Customer Message</h3>
+        <p style="font-size: 1.1rem; color: #ddd; white-space: pre-wrap;" th:text="${ticket.description}">Reason: Don't want it anymore</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Ticket Details</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="detail-item">
+            <span class="detail-label">Customer</span>
+            <span class="detail-value" th:text="${ticket.customer.email}">admin@pulse.com</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Type</span>
+            <span class="detail-value" th:text="${ticket.type}">CANCELLATION</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Subject</span>
+            <span class="detail-value" th:text="${ticket.subject}">Order #1 Cancelled by User</span>
+          </div>
+          <div class="detail-item" th:if="${ticket.order != null}">
+            <span class="detail-label">Linked Order</span>
+            <a class="detail-value" th:href="@{/admin/orders/manage/{id}(id=${ticket.order.id})}" th:text="'View Order #' + ${ticket.order.id}">#1</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Actions -->
+    <div class="card">
+      <h3 class="card-title">Update Status</h3>
+
+      <form th:action="@{/admin/support/update-status}" method="post">
+        <input type="hidden" name="ticketId" th:value="${ticket.id}">
+        <div class="form-group">
+          <label>Current Status: <strong th:text="${ticket.status}" style="color: var(--brand-red);">RESOLVED</strong></label>
+          <select name="status">
+            <option th:each="s : ${allStatuses}"
+                    th:value="${s}"
+                    th:text="${s}"
+                    th:selected="${s == ticket.status}"></option>
+          </select>
+        </div>
+        <button type="submit" class="btn-submit">Update</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

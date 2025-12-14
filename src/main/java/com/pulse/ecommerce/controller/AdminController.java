@@ -1,5 +1,6 @@
 package com.pulse.ecommerce.controller;
 
+import com.pulse.ecommerce.model.Order;
 import com.pulse.ecommerce.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -9,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -47,6 +49,10 @@ public class AdminController {
             if ("ROLE_ORDER_MANAGER".equals(role)) {
                 Map<String, Long> stats = adminService.getOrderManagerStats();
                 model.addAttribute("stats", stats);
+
+                List<Order> pendingOrders = adminService.getRecentPendingOrders();
+                model.addAttribute("pendingOrders", pendingOrders);
+
                 return "admin/order-manager-dashboard"; // Use the one with 3 tables
             }
         }

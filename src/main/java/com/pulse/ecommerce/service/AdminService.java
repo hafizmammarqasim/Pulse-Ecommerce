@@ -1,8 +1,8 @@
 package com.pulse.ecommerce.service;
 
-import com.pulse.ecommerce.model.ReturnStatus;
-import com.pulse.ecommerce.model.TicketStatus;
+import com.pulse.ecommerce.model.*;
 import com.pulse.ecommerce.repository.*;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class AdminService {
 
     @Autowired
     public AdminService(OrderRepository orderRepo, OrderReturnRepo returnRepo, SupportTicketRepo ticketRepo,
-                        ProductVariantRepository variantRepo, ProductRepository productRepo, CategoryRepository categoryRepo,UserRepo userRepo) {
+                        ProductVariantRepository variantRepo, ProductRepository productRepo, CategoryRepository categoryRepo, UserRepo userRepo) {
         this.orderRepo = orderRepo;
         this.returnRepo = returnRepo;
         this.ticketRepo = ticketRepo;
@@ -46,13 +46,17 @@ public class AdminService {
         return stats;
     }
 
+    public List<Order> getRecentPendingOrders() {
+        // We will fetch all pending orders, but you could limit it later with Pageable
+        return orderRepo.findByStatusOrderByCreatedAtDesc("PENDING");
+    }
+
     // --- Product Manager Stats ---
     public Map<String, Long> getProductManagerStats() {
         Map<String, Long> stats = new HashMap<>();
 
         //we defined 5 as our threshold
         stats.put("lowStockItems", variantRepo.countByStockQuantityLessThan(10));
-
         stats.put("totalProducts", productRepo.count());
         stats.put("totalCategories", categoryRepo.count());
 
@@ -80,4 +84,10 @@ public class AdminService {
 
         return stats;
     }
+
+    public List<SupportTicket> getOpenSupportTickets() {
+        return ticketRepo.findByTypeNotAndStatus(TicketType.RETURN, TicketStatus.OPEN);
+        // We will need to add this method to the repository
+    }
+
 }

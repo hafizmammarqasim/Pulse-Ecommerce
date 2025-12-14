@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Pending Returns | Pulse Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* --- PULSE ADMIN THEME --- */
+    :root {
+        --bg-black: #121212;
+        --bg-dark: #1e1e1e;
+        --brand-red: #cc0000;
+        --text-white: #ffffff;
+        --text-gray: #b3b3b3;
+        --border-color: #333;
+    }
+
+    body {
+        background-color: var(--bg-black);
+        color: var(--text-white);
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+        width: 250px;
+        background-color: var(--bg-dark);
+        border-right: 1px solid var(--border-color);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 40px;
+        color: white;
+        text-decoration: none;
+    }
+    .logo span { color: var(--brand-red); }
+
+    .nav-menu { list-style: none; padding: 0; margin: 0; }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: var(--text-gray);
+        text-decoration: none;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        transition: all 0.2s;
+    }
+
+    .nav-link.active, .nav-link:hover {
+        background-color: var(--brand-red);
+        color: white;
+    }
+
+    .nav-link i { width: 20px; text-align: center; }
+
+    .logout-section { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+    .logout-button { width: 100%; background: none; border: none; text-align: left; padding: 12px 15px; border-radius: 6px; color: var(--text-gray); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 15px; font-family: inherit; font-size: 1rem; }
+    .logout-button:hover { background-color: #444; color: white; }
+
+    /* --- MAIN CONTENT --- */
+    .main-content {
+        flex-grow: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
+
+    h1 {
+        border-left: 5px solid var(--brand-red);
+        padding-left: 15px;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        font-size: 2rem;
+    }
+
+    .table-wrapper {
+        background-color: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .dashboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .dashboard-table th {
+        text-align: left;
+        padding: 15px;
+        background-color: #2a2a2a;
+        color: var(--text-gray);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+
+    .dashboard-table td {
+        padding: 15px;
+        border-top: 1px solid var(--border-color);
+        vertical-align: middle;
+    }
+
+    .dashboard-table tbody tr:hover {
+        background-color: #252525;
+    }
+
+    .btn-action {
+        background: #444;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+    .btn-action:hover {
+        background: var(--brand-red);
+    }
+
+    .tab-link {
+    display: inline-block;
+    padding: 10px 20px; color: #b3b3b3;
+    text-decoration: none;
+    font-weight: bold;
+    }
+
+    .tab-link.active {
+     color: var(--brand-red);
+     border-bottom: 3px solid var(--brand-red);
+      }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <a href="/admin/dashboard" class="logo">PULSE<span>.</span> OM</a>
+  <ul class="nav-menu">
+    <li><a href="/admin/dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+    <li><a href="/admin/orders" class="nav-link"><i class="fas fa-box-open"></i> Orders</a></li>
+    <li><a href="/admin/returns" class="nav-link active"><i class="fas fa-undo"></i> Returns</a></li>
+    <li><a href="/admin/support" class="nav-link"><i class="fas fa-life-ring"></i> Support</a></li>
+  </ul>
+
+  <div class="logout-section">
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+  <h1>Pending Return Requests</h1>
+  <div class="tabs">
+    <a href="/admin/returns" class="tab-link active">Pending Approval</a>
+    <a href="/admin/returns/approved" class="tab-link">Approved & Awaiting Item</a>
+    <a href="/admin/returns/history" class="tab-link">Completed & History</a>
+  </div>
+  <div class="table-wrapper">
+    <table class="dashboard-table">
+      <thead>
+      <tr>
+        <th>Return ID</th>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Date Requested</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- DUMMY DATA LOOP (Replace with th:each later) -->
+      <tr th:each="ret : ${returns}">
+        <td th:text="'#' + ${ret.id}">#201</td>
+        <td th:text="'#' + ${ret.order.id}">#501</td>
+        <td th:text="${ret.order.customer.email}">customer@email.com</td>
+        <td th:text="${#temporals.format(ret.createdAt, 'dd MMM yyyy')}">14 Dec 2025</td>
+        <td>
+          <a th:href="@{/admin/returns/manage/{id}(id=${ret.id})}" class="btn-action">Manage</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

@@ -152,4 +152,26 @@ public class OrderController {
         return "order-details";
     }
 
+    @GetMapping("/manage/{id}")
+    public String showManageOrderPage(@PathVariable Long id, Model model) {
+        Order order = orderService.getOrderById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        model.addAttribute("order", order);
+        return "admin/admin-order-details";
+    }
+
+    // 2. Handle the update form submission (Simplified)
+    @PostMapping("/update")
+    public String updateOrder(
+            @RequestParam Long orderId,
+            @RequestParam String status,
+            @RequestParam(required = false) String courierName
+    ) {
+        orderService.updateOrderStatusAndCourier(orderId, status, courierName);
+
+        return "redirect:/admin/orders";
+    }
+
+
 }

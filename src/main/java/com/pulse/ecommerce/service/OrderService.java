@@ -128,4 +128,26 @@ public class OrderService {
         ticketRepo.save(ticket);
     }
 
+    @Transactional
+    public void updateOrderStatusAndCourier(Long orderId, String newStatus, String courierName) {
+
+        // 1. Find the order in the database
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Order ID: " + orderId));
+
+        // 2. Update the fields
+        order.setStatus(newStatus);
+
+        // Only update courier if provided
+        if (courierName != null && !courierName.isBlank()) {
+            order.setCourierName(courierName);
+        }
+
+        // 3. Save the changes back to the database
+        orderRepo.save(order);
+    }
+
+    public List<Order> getAllOrders() {
+        return orderRepo.findAll();
+    }
 }
