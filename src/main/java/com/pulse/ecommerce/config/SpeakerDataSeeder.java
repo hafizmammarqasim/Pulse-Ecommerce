@@ -31,7 +31,7 @@ public class SpeakerDataSeeder extends BaseSeeder implements CommandLineRunner {
         if (speakersCat == null) return;
 
         // Skip only if SPEAKERS already exist
-      //  if (productRepo.existsByCategory_Name("Speakers")) return;
+      if (productRepo.existsByCategory_Name("Speakers")) return;
 
         // 1 - ThunderBox (Party)
         SpeakerProduct s1 = new SpeakerProduct();

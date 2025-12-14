@@ -36,7 +36,7 @@ public class HeadphoneDataSeeder extends BaseSeeder implements CommandLineRunner
             // if (productRepo.count() > 0) return;
 
             // NEW: skip only if headphones already present
-            if (productRepo.existsByCategory_Name("Headphones")) return;
+          if (productRepo.existsByCategory_Name("Headphones")) return;
 
             // ... rest of your h1..h10 code unchanged ...
 

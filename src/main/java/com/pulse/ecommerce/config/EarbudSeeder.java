@@ -36,7 +36,7 @@ public class EarbudSeeder extends BaseSeeder implements CommandLineRunner {
         if (earbudsCat == null) return;
 
         // skip if earbuds already exist
-       // if (productRepo.existsByCategory_Name("Earbuds")) return;
+       if (productRepo.existsByCategory_Name("Earbuds")) return;
 
         // 1 - AirBeat X
         EarBudProduct e1 = new EarBudProduct();
