@@ -1,11 +1,10 @@
 package com.pulse.ecommerce.config;
 
-
 import com.pulse.ecommerce.model.Category;
 import com.pulse.ecommerce.model.PowerBankProduct;
-import com.pulse.ecommerce.repository.CategoryRepository;
-import com.pulse.ecommerce.repository.ProductRepository;
-import com.pulse.ecommerce.repository.ProductVariantRepository;
+import com.pulse.ecommerce.model.PowerbankOutputPort;
+import com.pulse.ecommerce.repository.*;
+import com.pulse.ecommerce.repository.PowerBankOutputPortRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,13 +15,25 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
 
     private final CategoryRepository categoryRepo;
     private final ProductRepository productRepo;
+    private final PowerBankOutputPortRepository portRepo;
 
     public PowerbankDataSeeder(CategoryRepository categoryRepo,
                                ProductRepository productRepo,
-                               ProductVariantRepository variantRepo) {
-        super(variantRepo);
+                               ProductVariantRepository variantRepo,
+                               ProductImageRepository imageRepo,
+                               PowerBankOutputPortRepository portRepo) {
+        super(variantRepo, imageRepo);
         this.categoryRepo = categoryRepo;
         this.productRepo = productRepo;
+        this.portRepo = portRepo;
+    }
+
+    private void addPort(PowerBankProduct pb, String name, int count) {
+        PowerbankOutputPort p = new PowerbankOutputPort();
+        p.setPowerbankProduct(pb);
+        p.setPortName(name);
+        p.setPortCount(count);
+        portRepo.save(p);
     }
 
     @Override
@@ -31,16 +42,9 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         Category powerbanksCat = categoryRepo.findByName("Powerbanks").orElse(null);
         if (powerbanksCat == null) return;
 
-        // OLD:
-        // if (productRepo.count() > 0) return;
-
-        // NEW: skip only if powerbanks already exist
         if (productRepo.existsByCategory_Name("Powerbanks")) return;
 
-        // ... rest of pb1..pb10 code unchanged ...
-
-
-    // 1 - VoltEdge (Rugged)
+        // 1 - VoltEdge (Rugged)
         PowerBankProduct pb1 = new PowerBankProduct();
         pb1.setName("VoltEdge");
         pb1.setCategory(powerbanksCat);
@@ -61,6 +65,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb1, "Black", "Rugged", 40);
         createVariant(pb1, "Camouflage Green", "Rugged", 30);
         createVariant(pb1, "Desert Sand", "Rugged", 25);
+        addPort(pb1, "USB-A", 2);
+        addPort(pb1, "USB-C", 1);
 
         // 2 - PowerSync (Travel)
         PowerBankProduct pb2 = new PowerBankProduct();
@@ -83,6 +89,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb2, "White", "Travel", 35);
         createVariant(pb2, "Black", "Travel", 30);
         createVariant(pb2, "Navy Blue", "Travel", 25);
+        addPort(pb2, "USB-A", 2);
+        addPort(pb2, "USB-C", 1);
 
         // 3 - ChargeCore (Classic)
         PowerBankProduct pb3 = new PowerBankProduct();
@@ -105,6 +113,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb3, "Black", "Classic", 40);
         createVariant(pb3, "Grey", "Classic", 30);
         createVariant(pb3, "Blue", "Classic", 25);
+        addPort(pb3, "USB-A", 2);
+        addPort(pb3, "USB-C", 1);
 
         // 4 - NanoBoost (Slim)
         PowerBankProduct pb4 = new PowerBankProduct();
@@ -127,6 +137,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb4, "Black", "Slim", 35);
         createVariant(pb4, "White", "Slim", 28);
         createVariant(pb4, "Rose Gold", "Slim", 20);
+        addPort(pb4, "USB-A", 1);
+        addPort(pb4, "USB-C", 1);
 
         // 5 - TurboFlow (Pro)
         PowerBankProduct pb5 = new PowerBankProduct();
@@ -149,6 +161,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb5, "Black", "Pro", 30);
         createVariant(pb5, "Blue", "Pro", 24);
         createVariant(pb5, "Red", "Pro", 20);
+        addPort(pb5, "USB-A", 2);
+        addPort(pb5, "USB-C", 1);
 
         // 6 - DuoCharge (Classic)
         PowerBankProduct pb6 = new PowerBankProduct();
@@ -171,6 +185,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb6, "Black", "Dual Port", 32);
         createVariant(pb6, "White", "Dual Port", 26);
         createVariant(pb6, "Navy", "Dual Port", 22);
+        addPort(pb6, "USB-A", 2);
+        addPort(pb6, "USB-C", 1);
 
         // 7 - TrailCharge (Rugged)
         PowerBankProduct pb7 = new PowerBankProduct();
@@ -193,6 +209,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb7, "Black", "Outdoor", 28);
         createVariant(pb7, "Army Green", "Outdoor", 22);
         createVariant(pb7, "Orange", "Outdoor", 20);
+        addPort(pb7, "USB-A", 2);
+        addPort(pb7, "USB-C", 1);
 
         // 8 - MetroPack (Travel)
         PowerBankProduct pb8 = new PowerBankProduct();
@@ -215,6 +233,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb8, "Black", "Travel", 34);
         createVariant(pb8, "Blue", "Travel", 26);
         createVariant(pb8, "Red", "Travel", 22);
+        addPort(pb8, "USB-A", 2);
+        addPort(pb8, "USB-C", 1);
 
         // 9 - HyperCell (Max)
         PowerBankProduct pb9 = new PowerBankProduct();
@@ -237,6 +257,8 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb9, "Black", "Max", 24);
         createVariant(pb9, "Graphite", "Max", 20);
         createVariant(pb9, "Blue", "Max", 18);
+        addPort(pb9, "USB-A", 3);
+        addPort(pb9, "USB-C", 1);
 
         // 10 - SnapLink (Slim / Mag-style)
         PowerBankProduct pb10 = new PowerBankProduct();
@@ -259,5 +281,6 @@ public class PowerbankDataSeeder extends BaseSeeder implements CommandLineRunner
         createVariant(pb10, "White", "Mag", 30);
         createVariant(pb10, "Black", "Mag", 26);
         createVariant(pb10, "Purple", "Mag", 20);
+        addPort(pb10, "USB-C", 1);
     }
 }

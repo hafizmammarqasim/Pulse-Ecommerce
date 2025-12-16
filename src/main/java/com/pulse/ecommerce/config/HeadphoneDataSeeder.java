@@ -6,6 +6,7 @@ package com.pulse.ecommerce.config;
 import com.pulse.ecommerce.model.Category;
 import com.pulse.ecommerce.model.HeadPhoneProduct;
 import com.pulse.ecommerce.repository.CategoryRepository;
+import com.pulse.ecommerce.repository.ProductImageRepository;
 import com.pulse.ecommerce.repository.ProductRepository;
 import com.pulse.ecommerce.repository.ProductVariantRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -21,11 +22,13 @@ public class HeadphoneDataSeeder extends BaseSeeder implements CommandLineRunner
 
     public HeadphoneDataSeeder(CategoryRepository categoryRepo,
                                ProductRepository productRepo,
-                               ProductVariantRepository variantRepo) {
-        super(variantRepo);
+                               ProductVariantRepository variantRepo,
+                               ProductImageRepository imageRepo) {
+        super(variantRepo, imageRepo);   // ✅ important change
         this.categoryRepo = categoryRepo;
         this.productRepo = productRepo;
     }
+
 
         public void run(String... args) {
 

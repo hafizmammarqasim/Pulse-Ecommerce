@@ -4,6 +4,7 @@ package com.pulse.ecommerce.config;
 import com.pulse.ecommerce.model.Category;
 import com.pulse.ecommerce.model.WatchProduct;
 import com.pulse.ecommerce.repository.CategoryRepository;
+import com.pulse.ecommerce.repository.ProductImageRepository;
 import com.pulse.ecommerce.repository.ProductRepository;
 import com.pulse.ecommerce.repository.ProductVariantRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -19,8 +20,9 @@ public class WatchDataSeeder extends BaseSeeder implements CommandLineRunner {
 
     public WatchDataSeeder(CategoryRepository categoryRepo,
                            ProductRepository productRepo,
-                           ProductVariantRepository variantRepo) {
-        super(variantRepo);
+                           ProductVariantRepository variantRepo,
+                           ProductImageRepository imageRepo) {
+        super(variantRepo, imageRepo);   // ✅ pass both
         this.categoryRepo = categoryRepo;
         this.productRepo = productRepo;
     }

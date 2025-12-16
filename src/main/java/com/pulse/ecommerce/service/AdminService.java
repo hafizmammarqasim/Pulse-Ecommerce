@@ -1,5 +1,6 @@
 package com.pulse.ecommerce.service;
 
+import com.pulse.ecommerce.model.ProductVariant;
 import com.pulse.ecommerce.model.ReturnStatus;
 import com.pulse.ecommerce.model.TicketStatus;
 import com.pulse.ecommerce.repository.*;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -47,17 +49,7 @@ public class AdminService {
     }
 
     // --- Product Manager Stats ---
-    public Map<String, Long> getProductManagerStats() {
-        Map<String, Long> stats = new HashMap<>();
 
-        //we defined 5 as our threshold
-        stats.put("lowStockItems", variantRepo.countByStockQuantityLessThan(10));
-
-        stats.put("totalProducts", productRepo.count());
-        stats.put("totalCategories", categoryRepo.count());
-
-        return stats;
-    }
 
     public Map<String, Object> getSuperAdminStats() {
         Map<String, Object> stats = new HashMap<>();
@@ -79,5 +71,18 @@ public class AdminService {
         }
 
         return stats;
+    }
+
+    public Map<String, Long> getProductManagerStats() {
+        Map<String, Long> stats = new HashMap<>();
+        stats.put("lowStockItems", variantRepo.countByStockQuantityLessThan(10));
+        stats.put("totalProducts", productRepo.count());
+        stats.put("totalCategories", categoryRepo.count());
+        return stats;
+    }
+
+    public List<ProductVariant> getLowStockVariantsForPM() {
+        // threshold 10, same as in stats
+        return variantRepo.findByStockQuantityLessThan(10);
     }
 }

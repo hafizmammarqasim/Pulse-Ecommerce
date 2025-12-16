@@ -33,6 +33,10 @@
     .dashboard-table td { padding: 15px; border-top: 1px solid var(--border-color); }
     .btn-action { background: #444; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold; }
     .btn-action:hover { background: var(--brand-red); }
+.low-stock {
+  color: red;
+  font-weight: bold;
+}
 
     /* Logout button specific styles */
     .logout-section { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
@@ -85,13 +89,25 @@
       <tr><th>Product Name</th><th>Variant</th><th>Stock Left</th><th>Action</th></tr>
       </thead>
       <tbody>
-      <tr>
-        <td>Pulse AirBeat X</td>
-        <td>White</td>
-        <td style="color: red; font-weight: bold;">4</td>
-        <td><a href="#" class="btn-action">Update Stock</a></td>
+      <tr th:each="variant : ${lowStockList}">
+        <td th:text="${variant.product.name}">Product name</td>
+        <td th:text="${variant.color} + ' - ' + ${variant.variantType}">Variant</td>
+        <td th:text="${variant.stockQuantity}"
+            th:classappend="${variant.stockQuantity} &lt; 10 ? 'low-stock' : ''">
+          0
+        </td>
+        <td>
+          <a th:href="@{'/admin/inventory/edit/' + ${variant.id}}" class="btn-action">
+            Update Stock
+          </a>
+        </td>
+      </tr>
+
+      <tr th:if="${#lists.isEmpty(lowStockList)}">
+        <td colspan="4">No low stock items right now.</td>
       </tr>
       </tbody>
+
     </table>
   </div>
 </div>

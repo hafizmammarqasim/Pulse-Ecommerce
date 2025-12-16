@@ -4,10 +4,8 @@ package com.pulse.ecommerce.config;
 import com.pulse.ecommerce.model.Category;
 import com.pulse.ecommerce.model.EarBudProduct;
 import com.pulse.ecommerce.model.EarbudCodec;
-import com.pulse.ecommerce.repository.CategoryRepository;
-import com.pulse.ecommerce.repository.EarBudCodecRepository;
-import com.pulse.ecommerce.repository.ProductRepository;
-import com.pulse.ecommerce.repository.ProductVariantRepository;
+import com.pulse.ecommerce.model.ProductVariant;
+import com.pulse.ecommerce.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,20 +14,20 @@ import java.math.BigDecimal;
 @Component
 public class EarbudSeeder extends BaseSeeder implements CommandLineRunner {
 
-    private final CategoryRepository categoryRepo;
-    private final ProductRepository productRepo;
-    private final EarBudCodecRepository earbudCodecRepo;
+ private final CategoryRepository categoryRepo;
+ private final ProductRepository productRepo;
+ private final EarBudCodecRepository earbudCodecRepo;
 
-    public EarbudSeeder(CategoryRepository categoryRepo,
-                        ProductRepository productRepo,
-                        ProductVariantRepository variantRepo,
-                        EarBudCodecRepository earbudCodecRepo) {
-        super(variantRepo);
-        this.categoryRepo = categoryRepo;
-        this.productRepo = productRepo;
-        this.earbudCodecRepo = earbudCodecRepo;
-    }
-
+ public EarbudSeeder(CategoryRepository categoryRepo,
+                     ProductRepository productRepo,
+                     ProductVariantRepository variantRepo,
+                     EarBudCodecRepository earbudCodecRepo,
+                     ProductImageRepository imageRepo) {
+  super(variantRepo, imageRepo);
+  this.categoryRepo = categoryRepo;
+  this.productRepo = productRepo;
+  this.earbudCodecRepo = earbudCodecRepo;
+ }
     @Override
     public void run(String... args) {
         Category earbudsCat = categoryRepo.findByName("Earbuds").orElse(null);
@@ -61,12 +59,18 @@ public class EarbudSeeder extends BaseSeeder implements CommandLineRunner {
         e1.setWeightGrams(4);
         productRepo.save(e1);
 
-        createVariant(e1, "Black", "Standard", 50);
-        createVariant(e1, "White", "Standard", 40);
-        createVariant(e1, "Navy Blue", "Standard", 30);
-        createCodec(e1, "AAC");
-        createCodec(e1, "SBC");
+     // create variants and capture them
+     ProductVariant e1Black = createVariant(e1, "Black", "Standard", 50);
+     ProductVariant e1White = createVariant(e1, "White", "Standard", 40);
+     ProductVariant e1Navy  = createVariant(e1, "Navy Blue", "Standard", 30);
 
+// add images per color (use whatever filenames you’ll put in /static/images)
+    // addVariantImage(e1Black, "/Images/img_1.png");
+     //addVariantImage(e1White, "/Images/img.png");
+     //addVariantImage(e1Navy,  "/Images/img_2.png");
+
+     createCodec(e1, "AAC");
+     createCodec(e1, "SBC");
         // 2 - NeoBuds Pro
         EarBudProduct e2 = new EarBudProduct();
         e2.setName("NeoBuds Pro");

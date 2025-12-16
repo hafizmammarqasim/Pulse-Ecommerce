@@ -2,6 +2,8 @@ package com.pulse.ecommerce.model;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "product_variants")
@@ -69,4 +71,16 @@ public class ProductVariant {
 //    public void setPrice(BigDecimal price) {
 //        this.price = price;
 //    }
+
+
+    @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product_Image> images = new ArrayList<>();
+
+    public List<Product_Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Product_Image> images) {
+        this.images = images;
+    }
 }
