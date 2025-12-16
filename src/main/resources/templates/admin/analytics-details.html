@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Report Details | Pulse</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* --- Standard Pulse Admin Theme --- */
+    :root { --bg-black: #121212; --bg-dark: #1e1e1e; --brand-red: #cc0000; --text-white: #ffffff; --text-gray: #b3b3b3; --border-color: #333; }
+    body { background-color: var(--bg-black); color: var(--text-white); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+    .sidebar { width: 250px; background-color: var(--bg-dark); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+    .logo { font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 40px; }
+    .logo span { color: var(--brand-red); }
+    .nav-menu { list-style: none; padding: 0; margin: 0; }
+    .nav-link { display: flex; align-items: center; gap: 15px; color: var(--text-gray); text-decoration: none; padding: 12px 15px; border-radius: 6px; font-weight: 600; margin-bottom: 5px; transition: all 0.2s; }
+    .nav-link.active, .nav-link:hover { background-color: var(--brand-red); color: white; }
+    .nav-link i { width: 20px; text-align: center; }
+    .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; }
+    h1 { font-size: 2rem; margin: 0 0 30px 0; border-left: 5px solid var(--brand-red); padding-left: 15px; }
+    h2 { font-size: 1.5rem; margin-top: 50px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+    .table-wrapper { background-color: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+    .dashboard-table { width: 100%; border-collapse: collapse; }
+    .dashboard-table th { text-align: left; padding: 15px 20px; background-color: #2a2a2a; font-size: 0.8rem; text-transform: uppercase; color: var(--text-gray); }
+    .dashboard-table td { padding: 15px 20px; border-top: 1px solid var(--border-color); }
+    .dashboard-table tbody tr:hover { background-color: #252525; }
+    .btn-action { background-color: var(--brand-red); color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; transition: background-color 0.2s; }
+    .btn-action:hover { background-color: #990000; }
+    .logout-section { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+    .logout-button { width: 100%; background: none; border: none; text-align: left; padding: 12px 15px; border-radius: 6px; color: var(--text-gray); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 15px; font-family: inherit; font-size: 1rem; }
+    .logout-button:hover { background-color: #444; color: white; }
+    .empty-state { text-align: center; color: var(--text-gray); padding: 50px; }
+    /* --- KPI Card Styles for Category View --- */
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 40px; }
+    .kpi-card { background-color: var(--bg-dark); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .kpi-label { font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+    .kpi-value { font-size: 2rem; font-weight: 700; color: var(--text-white); }
+    .kpi-value.green { color: #28a745; }
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="logo">PULSE<span>.</span> SA</div>
+  <ul class="nav-menu">
+    <li><a href="/admin/dashboard" class="nav-link active"><i class="fas fa-chart-line"></i> Analytics</a></li>
+    <li><a href="/admin/users" class="nav-link"><i class="fas fa-users-cog"></i> User Management</a></li>
+  </ul>
+  <div class="logout-section">
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </form>
+  </div>
+</div>
+
+<div class="main-content">
+  <h1 th:text="${title}">Report Details</h1>
+
+  <!-- ⭐️ CONDITIONAL KPI CARDS: Only show if summaryKpis object exists (i.e., for category reports) ⭐️ -->
+  <div th:if="${summaryKpis}" class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Category Revenue</div>
+      <div class="kpi-value green" th:text="'Rs. ' + ${#numbers.formatDecimal(summaryKpis.totalRevenue, 1, 'COMMA', 2, 'POINT')}"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Category Units Sold</div>
+      <div class="kpi-value" th:text="${summaryKpis.totalUnitsSold}"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg. Price Per Item</div>
+      <div class="kpi-value" th:text="'Rs. ' + ${#numbers.formatDecimal(summaryKpis.avgItemPrice, 1, 'COMMA', 2, 'POINT')}"></div>
+    </div>
+  </div>
+
+  <!-- The title and table will now serve as the breakdown -->
+  <h2 th:if="${summaryKpis}">Product Breakdown</h2>
+  <div class="table-wrapper">
+    <table class="dashboard-table">
+      <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Units Sold</th>
+        <th>Avg. Price Per Unit</th>
+        <th style="text-align: right;">Total Revenue</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="row : ${stats}">
+        <td th:text="${row['label']}"></td>
+        <td th:text="${row['unitsSold']}"></td>
+        <td th:with="avgPrice=${row['unitsSold'] > 0 ? row['totalRevenue'] / row['unitsSold'] : 0}"
+            th:text="'Rs. ' + ${#numbers.formatDecimal(avgPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+        <td style="text-align: right; font-weight: bold; color: #28a745;"
+            th:text="'Rs. ' + ${#numbers.formatDecimal(row['totalRevenue'], 1, 'COMMA', 2, 'POINT')}"></td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(stats)}">
+        <td colspan="4" class="empty-state">
+          No sales data available for this period or category.
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <a href="/admin/dashboard" class="btn-action" style="margin-top: 30px; display: inline-block;">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+</div>
+</body>
+</html>

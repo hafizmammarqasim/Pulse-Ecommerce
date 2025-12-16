@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <title>Super Admin | Pulse</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* --- COPY/PASTE THE SAME CSS FROM ADMIN-DASHBOARD.HTML --- */
+    /* --- Standard Pulse Admin Theme --- */
     :root { --bg-black: #121212; --bg-dark: #1e1e1e; --brand-red: #cc0000; --text-white: #ffffff; --text-gray: #b3b3b3; --border-color: #333; }
     body { background-color: var(--bg-black); color: var(--text-white); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
     .sidebar { width: 250px; background-color: var(--bg-dark); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
@@ -18,92 +19,153 @@
     .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; }
     h1 { font-size: 2rem; margin: 0 0 10px 0; }
     .page-subtitle { color: var(--text-gray); margin-bottom: 30px; }
-    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px; }
-    .kpi-card { background-color: var(--bg-dark); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); }
-    .kpi-label { font-size: 0.9rem; color: var(--text-gray); }
-    .kpi-value { font-size: 2.5rem; font-weight: 800; color: var(--text-white); }
-    .kpi-value.red { color: var(--brand-red); }
-    h2 { font-size: 1.5rem; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
-    .form-card { background: var(--bg-dark); padding: 30px; border-radius: 8px; border: 1px solid var(--border-color); }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end; }
-    input, select { width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid var(--border-color); color: white; border-radius: 4px; }
-    .btn-submit { background: var(--brand-red); color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-
-    /* Logout button specific styles */
     .logout-section { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
-    .logout-button { width: 100%; background: none; border: none; text-align: left; padding: 12px 15px; border-radius: 6px; color: var(--text-gray); font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 15px; }
+    .logout-button { width: 100%; background: none; border: none; text-align: left; padding: 12px 15px; border-radius: 6px; color: var(--text-gray); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 15px; font-family: inherit; font-size: 1rem; }
     .logout-button:hover { background-color: #444; color: white; }
+
+    /* --- KPI Card Grid & Card Improvements --- */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px; }
+    .kpi-card { background-color: var(--bg-dark); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; }
+    .kpi-label { font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+    .kpi-value { font-size: 2rem; font-weight: 700; color: var(--text-white); line-height: 1.2; word-wrap: break-word; }
+    .kpi-value.green { color: #28a745; }
+    .kpi-value.red { color: var(--brand-red); }
+
+    /* Chart Styles */
+    .charts-container { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 40px; }
+    .chart-card { background-color: var(--bg-dark); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .chart-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: var(--text-gray); text-transform: uppercase; }
   </style>
 </head>
 <body>
 
 <div class="sidebar">
-  <div class="logo">PULSE<span>.</span> ADMIN</div>
+  <!-- Sidebar content remains the same -->
+  <div class="logo">PULSE<span>.</span> SA</div>
   <ul class="nav-menu">
-    <li><a href="/admin/dashboard" class="nav-link active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+    <li><a href="/admin/dashboard" class="nav-link active"><i class="fas fa-chart-line"></i> Analytics</a></li>
     <li><a href="/admin/users" class="nav-link"><i class="fas fa-users-cog"></i> User Management</a></li>
   </ul>
-
   <div class="logout-section">
     <form th:action="@{/logout}" method="post">
-      <button type="submit" class="logout-button">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
+      <button type="submit" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </form>
   </div>
 </div>
 
 <div class="main-content">
-
   <h1>Super Admin Dashboard</h1>
-  <p class="page-subtitle">Manage users and view high-level analytics.</p>
+  <p class="page-subtitle">Business intelligence and performance metrics.</p>
 
+  <!-- KPI CARDS - FULLY OVERHAULED -->
   <div class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-label">Total Revenue</div>
-      <div class="kpi-value" th:text="'Rs. ' + ${stats.totalRevenue}">0</div>
+      <!-- FIXED: Added number formatting to automatically add commas -->
+      <div class="kpi-value green" th:text="'Rs. ' + ${#numbers.formatDecimal(stats.totalRevenue, 1, 'COMMA', 2, 'POINT')}">0</div>
+    </div>
+    <div class="kpi-card">
+      <!-- REPLACED: "Total Customers" is now "Revenue This Month" -->
+      <div class="kpi-label">Revenue This Month</div>
+      <div class="kpi-value green" th:text="'Rs. ' + ${#numbers.formatDecimal(stats.revenueThisMonth, 1, 'COMMA', 2, 'POINT')}">0</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Total Orders</div>
       <div class="kpi-value" th:text="${stats.totalOrders}">0</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Total Customers</div>
-      <div class="kpi-value" th:text="${stats.totalCustomers}">0</div>
-    </div>
-    <div class="kpi-card">
       <div class="kpi-label">Avg. Order Value</div>
-      <div class="kpi-value" th:text="'Rs. ' + ${stats.avgOrderValue}">0</div>
+      <div class="kpi-value red" th:text="'Rs. ' + ${#numbers.formatDecimal(stats.avgOrderValue, 1, 'COMMA', 2, 'POINT')}">0</div>
     </div>
   </div>
 
-  <h2>Create New Admin Account</h2>
-  <div class="form-card">
-    <form action="/admin/users/create" method="post">
-      <div class="form-grid">
-        <div>
-          <label style="font-size:0.8rem; color:#888;">Email</label>
-          <input type="email" name="email" required>
-        </div>
-        <div>
-          <label style="font-size:0.8rem; color:#888;">Password</label>
-          <input type="password" name="password" required>
-        </div>
-        <div>
-          <label style="font-size:0.8rem; color:#888;">Role</label>
-          <select name="role">
-            <option value="ORDER_MANAGER">Order Manager</option>
-            <option value="PRODUCT_MANAGER">Product Manager</option>
-          </select>
-        </div>
-        <div>
-          <button type="submit" class="btn-submit">Create Admin</button>
-        </div>
+  <div class="charts-container">
+    <!-- Chart containers remain the same -->
+    <div class="chart-card">
+      <div class="chart-header">Revenue History (Last 6 Months)</div>
+      <div style="position: relative; height: 350px;">
+        <canvas id="revenueChart"></canvas>
       </div>
-    </form>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">Revenue by Category</div>
+      <div style="position: relative; height: 350px;">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
   </div>
-
 </div>
+
+<!-- JavaScript section remains the same -->
+<script th:inline="javascript">
+  const monthlyData = /*[[${stats.monthlyData}]]*/ [];
+  const categoryData = /*[[${stats.categoryData}]]*/ [];
+
+  const getLabels = (data) => data.map(item => item.label);
+  const getValues = (data) => data.map(item => item.value);
+
+  // --- A. REVENUE CHART (Bar) ---
+  const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+  const revenueChart = new Chart(ctxRevenue, {
+      type: 'bar',
+      data: {
+          labels: getLabels(monthlyData),
+          datasets: [{
+              label: 'Revenue',
+              data: getValues(monthlyData),
+              backgroundColor: 'rgba(204, 0, 0, 0.7)',
+              borderColor: 'rgba(204, 0, 0, 1)',
+              borderWidth: 1,
+              borderRadius: 4
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+              y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#bbb' } },
+              x: { grid: { display: false }, ticks: { color: '#fff' } }
+          },
+          plugins: { legend: { display: false } },
+          onClick: (e) => {
+              const points = revenueChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+              if (points.length) {
+                  const label = revenueChart.data.labels[points[0].index];
+                  window.location.href = '/admin/analytics/month?date=' + label;
+              }
+          }
+      }
+  });
+
+  // --- B. CATEGORY CHART (Doughnut) ---
+  const categoryColors = ['#cc0000', '#ff6b6b', '#ffc107', '#17a2b8', '#f8f9fa'];
+  const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+  const categoryChart = new Chart(ctxCategory, {
+      type: 'doughnut',
+      data: {
+          labels: getLabels(categoryData),
+          datasets: [{
+              data: getValues(categoryData),
+              backgroundColor: categoryColors,
+              borderWidth: 0
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: { position: 'bottom', labels: { color: '#fff', boxWidth: 12, padding: 20 } }
+          },
+          onClick: (e) => {
+              const points = categoryChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+              if (points.length) {
+                  const label = categoryChart.data.labels[points[0].index];
+                  window.location.href = '/admin/analytics/category?name=' + label;
+              }
+          }
+      }
+  });
+</script>
 
 </body>
 </html>

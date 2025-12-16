@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Admin | Pulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- Standard Pulse Admin Theme --- */
+        :root { --bg-black: #121212; --bg-dark: #1e1e1e; --brand-red: #cc0000; --text-white: #ffffff; --text-gray: #b3b3b3; --border-color: #333; }
+        body { background-color: var(--bg-black); color: var(--text-white); font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 250px; background-color: var(--bg-dark); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .logo { font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 40px; }
+        .logo span { color: var(--brand-red); }
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+        .nav-link { display: flex; align-items: center; gap: 15px; color: var(--text-gray); text-decoration: none; padding: 12px 15px; border-radius: 6px; font-weight: 600; margin-bottom: 5px; transition: all 0.2s; }
+        .nav-link.active, .nav-link:hover { background-color: var(--brand-red); color: white; }
+        .nav-link i { width: 20px; text-align: center; }
+        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        h1 { font-size: 2rem; margin: 0 0 30px 0; }
+        .form-card { max-width: 600px; background: var(--bg-dark); padding: 30px 40px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .form-card label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-gray); font-size: 0.9rem; }
+        .form-card input, .form-card select { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid var(--border-color); color: white; margin-bottom: 20px; border-radius: 4px; box-sizing: border-box; font-size: 1rem; }
+        .form-card input:focus, .form-card select:focus { border-color: var(--brand-red); outline: none; }
+        .btn-submit { width: 100%; background: var(--brand-red); color: white; padding: 15px; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 1.1rem; text-transform: uppercase; transition: background-color 0.2s; }
+        .btn-submit:hover { background-color: #990000; }
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; font-weight: 600; border: 1px solid transparent; }
+        .alert-danger { background-color: #5c0000; border-color: var(--brand-red); color: white; }
+        .logout-section { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .logout-button { width: 100%; background: none; border: none; text-align: left; padding: 12px 15px; border-radius: 6px; color: var(--text-gray); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 15px; font-family: inherit; font-size: 1rem; }
+        .logout-button:hover { background-color: #444; color: white; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo">PULSE<span>.</span> SA</div>
+    <ul class="nav-menu">
+        <li><a href="/admin/dashboard" class="nav-link"><i class="fas fa-chart-line"></i> Analytics</a></li>
+        <li><a href="/admin/users" class="nav-link active"><i class="fas fa-users-cog"></i> User Management</a></li>
+    </ul>
+    <div class="logout-section">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </form>
+    </div>
+</div>
+
+<div class="main-content">
+    <h1>Create New Admin</h1>
+
+    <div class="form-card">
+        <!-- ADDED: Error message display -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form th:action="@{/admin/users/create}" method="post">
+            <label for="fname">First Name</label>
+            <!-- ADDED: th:value to repopulate field on error -->
+            <input type="text" id="fname" name="fname" required th:value="${fname}">
+
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" name="lname" required th:value="${lname}">
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required th:value="${email}">
+
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" name="phone" required th:value="${phone}">
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="role">Role</label>
+            <select id="role" name="role">
+                <option value="ROLE_ORDER_MANAGER">Order Manager</option>
+                <option value="ROLE_PRODUCT_MANAGER">Product Manager</option>
+                <option value="ROLE_SUPER_ADMIN">Super Admin</option>
+            </select>
+
+            <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
