@@ -2,77 +2,39 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
-<nav th:fragment="navbar" style="
-    background-color: #000000;
-    color: white;
-    padding: 20px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 4px solid #cc0000;
-    font-family: sans-serif;">
-
-    <!-- 1. LEFT: LOGO -->
-    <a th:href="@{/}" style="
-        text-decoration: none;
-        font-size: 2em;
-        font-weight: 900;
-        color: white;
-        text-transform: uppercase;
-        letter-spacing: 1px;">
-        PULSE<span style="color: #cc0000;">.</span>
+<!-- This fragment contains ONLY the navbar structure -->
+<nav th:fragment="navbar" class="navbar">
+    <!-- Logo -->
+    <a th:href="@{/}" class="navbar-logo">
+        PULSE<span>.</span>
     </a>
 
-    <!-- 2. MIDDLE: SEARCH BAR -->
-    <form th:action="@{/search}" method="get" style="
-        display: flex;
-        flex-grow: 1;
-        max-width: 500px;
-        margin: 0 20px;">
-        <input type="text" name="query" placeholder="Search for products..." style="
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 4px 0 0 4px;
-            outline: none;">
-        <button type="submit" style="
-            background-color: #cc0000;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            font-weight: bold;">
-            Search
-        </button>
+    <!-- Search Bar -->
+    <form th:action="@{/search}" method="get" class="navbar-search">
+        <input type="text" name="query" placeholder="Search for products...">
+        <button type="submit"><i class="fas fa-search"></i></button>
     </form>
 
-    <!-- 3. RIGHT: NAVIGATION LINKS -->
-    <div style="display: flex; gap: 25px; align-items: center;">
+    <!-- Navigation Links -->
+    <div class="navbar-actions">
+        <a th:href="@{/}" class="nav-link">Home</a>
+        <a th:href="@{/order/view}" class="nav-link">Orders</a>
+        <a th:href="@{/support/my-tickets}" class="nav-link">Support</a>
 
-        <!-- Static Links -->
-        <a th:href="@{/}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Home</a>
-        <a th:href="@{/cart/view}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">🛒</a>
-        <a th:href="@{/order/view}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Orders</a>
-        <a th:href="@{/support/my-tickets}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Support</a>
+        <a th:href="@{/cart/view}" class="nav-link icon" title="View Cart">
+            <i class="fas fa-shopping-cart"></i>
+        </a>
 
-        <!-- Case A: User is Logged In -> Show Logout -->
+        <!-- Authenticated: Logout -->
         <div sec:authorize="isAuthenticated()">
             <form th:action="@{/logout}" method="post" style="margin: 0;">
-                <button type="submit" style="
-                    background: none; border: none; color: #cc0000; font-size: 1.1em;
-                    font-weight: 700; cursor: pointer; padding: 0; font-family: inherit;">
-                    Logout
-                </button>
+                <button type="submit" class="btn-logout">Logout</button>
             </form>
         </div>
 
-        <!-- Case B: User is Anonymous -> Show Login -->
+        <!-- Anonymous: Login -->
         <div sec:authorize="isAnonymous()">
-            <a th:href="@{/login}" style="
-                color: #cc0000; text-decoration: none; font-size: 1.1em; font-weight: 700;">
-                Login
-            </a>
+            <a th:href="@{/login}" class="btn-login">Login</a>
         </div>
     </div>
 </nav>

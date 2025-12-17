@@ -103,10 +103,9 @@
         color: var(--text-white);
     }
 
-    /* The Price Value */
     .val.price {
         color: var(--brand-red);
-        font-family: monospace; /* Tech feel for numbers */
+        font-family: monospace;
         font-size: 1.1rem;
     }
 
@@ -120,22 +119,24 @@
         display: inline-block;
         text-align: center;
         letter-spacing: 0.5px;
-        min-width: 100px; /* Fixed width for alignment */
+        min-width: 100px;
+        border: 1px solid transparent;
     }
 
     /* Delivery Statuses */
-    .status-PENDING { background: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid #ffc107; }
-    .status-SHIPPED { background: rgba(23, 162, 184, 0.15); color: #17a2b8; border: 1px solid #17a2b8; }
-    .status-DELIVERED { background: rgba(40, 167, 69, 0.15); color: #28a745; border: 1px solid #28a745; }
-    .status-CANCELLED { background: rgba(220, 53, 69, 0.15); color: #dc3545; border: 1px solid #dc3545; }
+    .status-PENDING { background: rgba(255, 193, 7, 0.15); color: #ffc107; border-color: #ffc107; }
+    .status-SHIPPED { background: rgba(23, 162, 184, 0.15); color: #17a2b8; border-color: #17a2b8; }
+    .status-DELIVERED { background: rgba(40, 167, 69, 0.15); color: #28a745; border-color: #28a745; }
+    .status-CANCELLED { background: rgba(220, 53, 69, 0.15); color: #dc3545; border-color: #dc3545; }
 
     /* Return Statuses */
-    .status-REQUESTED, .status-RETURN_REQUESTED { background: rgba(111, 66, 193, 0.15); color: #b185f7; border: 1px solid #b185f7; }
-    .status-APPROVED { background: rgba(0, 123, 255, 0.15); color: #5aaaff; border: 1px solid #007bff; }
-    .status-REFUNDED { background: rgba(40, 167, 69, 0.15); color: #28a745; border: 1px solid #28a745; }
-    .status-REJECTED { background: rgba(220, 53, 69, 0.15); color: #dc3545; border: 1px solid #dc3545; }
+    .status-REQUESTED, .status-RETURN_REQUESTED { background: rgba(111, 66, 193, 0.15); color: #b185f7; border-color: #b185f7; }
+    .status-APPROVED { background: rgba(0, 123, 255, 0.15); color: #5aaaff; border-color: #007bff; }
+    .status-RECEIVED { background: rgba(23, 162, 184, 0.15); color: #17a2b8; border-color: #17a2b8; }
+    .status-REFUNDED { background: rgba(40, 167, 69, 0.15); color: #28a745; border-color: #28a745; }
+    .status-REJECTED { background: rgba(220, 53, 69, 0.15); color: #dc3545; border-color: #dc3545; }
 
-    /* --- THE "VIEW DETAILS" BUTTON (Improved) --- */
+    /* --- THE "VIEW DETAILS" BUTTON --- */
     .btn-view-details {
         background-color: transparent;
         color: var(--text-white);
@@ -205,7 +206,6 @@
         color: var(--text-gray);
     }
 
-    /* Status Text on Right (Small text) */
     .item-status-text {
         font-size: 0.85rem;
         text-align: right;
@@ -240,6 +240,136 @@
         .order-header { grid-template-columns: 1fr 1fr; gap: 20px; }
         .header-col:last-child { grid-column: 1 / -1; justify-self: start; margin-top: 10px; }
     }
+
+    /* =========================================
+       1. GLOBAL VARIABLES & RESET
+       ========================================= */
+    :root {
+        --bg-black: #121212;
+        --bg-dark: #1e1e1e;
+        --brand-red: #cc0000;
+        --text-white: #ffffff;
+        --text-gray: #b3b3b3;
+        --border-color: #333;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-black);
+        color: var(--text-white);
+        overflow-x: hidden;
+    }
+
+    /* =========================================
+       2. NAVBAR STYLES (REQUIRED FOR FRAGMENT)
+       ========================================= */
+    .navbar {
+        background-color: var(--bg-dark);
+        color: var(--text-white);
+        padding: 15px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    /* Logo */
+    .navbar-logo {
+        text-decoration: none;
+        font-size: 1.8em;
+        font-weight: 900;
+        color: var(--text-white);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-right: 30px;
+    }
+    .navbar-logo span { color: var(--brand-red); }
+
+    /* Search Bar */
+    .navbar-search {
+        display: flex;
+        flex-grow: 1;
+        max-width: 600px;
+        background-color: #2a2a2a;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        transition: border-color 0.2s;
+    }
+    .navbar-search:focus-within { border-color: var(--brand-red); }
+    .navbar-search input {
+        width: 100%;
+        padding: 12px 15px;
+        border: none;
+        background: none;
+        outline: none;
+        color: var(--text-white);
+        font-size: 1rem;
+    }
+    .navbar-search button {
+        background-color: var(--brand-red);
+        color: white;
+        border: none;
+        padding: 0 20px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: background-color 0.2s;
+    }
+    .navbar-search button:hover { background-color: #aa0000; }
+
+    /* Links & Actions */
+    .navbar-actions {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        margin-left: 30px;
+    }
+    .nav-link {
+        color: var(--text-gray);
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: color 0.2s, background-color 0.2s;
+    }
+    .nav-link:hover {
+        color: var(--text-white);
+        background-color: #2a2a2a;
+    }
+    .nav-link.icon { font-size: 1.3rem; }
+
+    /* Auth Buttons */
+    .btn-login {
+        background-color: var(--brand-red);
+        color: var(--text-white);
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+    .btn-login:hover { background-color: #aa0000; }
+
+    .btn-logout {
+        background: none;
+        border: none;
+        color: var(--text-gray);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 8px 12px;
+        font-family: inherit;
+        border-radius: 4px;
+        transition: color 0.2s, background-color 0.2s;
+    }
+    .btn-logout:hover {
+        color: var(--text-white);
+        background-color: #2a2a2a;
+    }
   </style>
 </head>
 <body>
@@ -255,47 +385,33 @@
     </div>
   </div>
 
-  <!-- 1. IF ORDERS EXIST -->
   <div th:if="${not #lists.isEmpty(orderList)}">
-
-    <!-- Loop through each Order -->
     <div class="order-card" th:each="order : ${orderList}">
-
-      <!-- HEADER: The Summary Bar -->
       <div class="order-header">
-
         <div class="header-col">
           <span class="label">Order ID</span>
           <span class="val" th:text="'#' + ${order.id}">#501</span>
         </div>
-
         <div class="header-col">
           <span class="label">Date</span>
           <span class="val" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy')}">12 DEC 2025</span>
         </div>
-
         <div class="header-col">
           <span class="label">Total</span>
           <span class="val price" th:text="'Rs. ' + ${order.totalAmount}">Rs. 5000</span>
         </div>
-
         <div class="header-col">
           <span class="label">Status</span>
-
-          <!-- OPTION 2 LOGIC: Check Map for Return Status -->
           <span th:if="${returnStatuses.containsKey(order.id)}"
                 class="badge"
                 th:classappend="'status-' + ${returnStatuses.get(order.id)}"
-                >RETURN REQUESTED</span>
-
-          <!-- Normal Status -->
+                th:text="'RETURN ' + ${returnStatuses.get(order.id).toString().replace('_', ' ')}">
+          </span>
           <span th:unless="${returnStatuses.containsKey(order.id)}"
                 class="badge"
                 th:classappend="'status-' + ${order.status}"
                 th:text="${order.status}">PENDING</span>
         </div>
-
-        <!-- NEW IMPROVED BUTTON -->
         <div class="header-col" style="align-items: flex-end;">
           <a th:href="@{/order/details/{id}(id=${order.id})}" class="btn-view-details">
             View Details <i class="fas fa-arrow-right"></i>
@@ -303,14 +419,10 @@
         </div>
       </div>
 
-      <!-- BODY: Preview Items -->
       <div class="order-body">
         <div class="order-item-row" th:each="item : ${order.items}">
-
-          <!-- Left: Item Info -->
           <div class="item-info">
             <img th:src="@{/images/tempImage.avif}" class="item-img" alt="Product">
-
             <div>
               <span class="item-name" th:text="${item.variant.product.name}">Product Name</span>
               <div class="item-meta">
@@ -319,36 +431,37 @@
               </div>
             </div>
           </div>
-
-          <!-- Status Text -->
           <div class="item-status-text">
-            <!-- Return Active -->
-            <span th:if="${returnStatuses.containsKey(order.id)}" style="color: #b185f7; font-weight: 600;">
-                  <i class="fas fa-undo"></i> Return Processing
-              </span>
-
-            <!-- Normal Flow -->
-            <span th:unless="${returnStatuses.containsKey(order.id)}" style="color: #666;">
-                   <span th:if="${order.status == 'DELIVERED'}" style="color: #28a745; font-weight: 600;">✓ Delivered</span>
-                   <span th:if="${order.status == 'PENDING'}">Processing...</span>
-                   <span th:if="${order.status == 'SHIPPED'}">On the way</span>
-              </span>
+            <div th:if="${returnStatuses.containsKey(order.id)}" th:with="returnStatus=${returnStatuses.get(order.id)}">
+                  <span th:if="${returnStatus.toString() == 'REQUESTED' or returnStatus.toString() == 'APPROVED'}" style="color: #b185f7; font-weight: 600;">
+                      <i class="fas fa-undo"></i> Return In Progress
+                  </span>
+              <span th:if="${returnStatus.toString() == 'RECEIVED'}" style="color: #17a2b8; font-weight: 600;">
+                      <i class="fas fa-warehouse"></i> Return Received
+                  </span>
+              <span th:if="${returnStatus.toString() == 'REFUNDED'}" style="color: #28a745; font-weight: 600;">
+                      <i class="fas fa-check-circle"></i> Return Complete
+                  </span>
+              <span th:if="${returnStatus.toString() == 'REJECTED'}" style="color: #dc3545; font-weight: 600;">
+                      <i class="fas fa-times-circle"></i> Return Rejected
+                  </span>
+            </div>
+            <div th:unless="${returnStatuses.containsKey(order.id)}">
+              <span th:if="${order.status == 'DELIVERED'}" style="color: #28a745; font-weight: 600;">✓ Delivered</span>
+              <span th:if="${order.status == 'PENDING'}" style="color: #666;">Processing...</span>
+              <span th:if="${order.status == 'SHIPPED'}" style="color: #666;">On the way</span>
+            </div>
           </div>
-
         </div>
       </div>
-
     </div>
-
   </div>
 
-  <!-- 2. IF NO ORDERS -->
   <div class="empty-state" th:if="${#lists.isEmpty(orderList)}">
     <h3 style="color:white; margin-bottom:10px;">No orders found</h3>
     <p>You haven't placed any orders yet.</p>
     <a href="/" class="btn-shop">Start Shopping</a>
   </div>
-
 </div>
 
 </body>
