@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>PULSE.PM – Inventory</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-black: #121212;
+      --bg-dark: #1e1e1e;
+      --brand-red: #cc0000;
+      --text-white: #ffffff;
+      --text-gray: #b3b3b3;
+      --border-color: #333;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-black);
+      color: var(--text-white);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: var(--bg-dark);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      flex-shrink: 0;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .logo span { color: var(--brand-red); }
+    .nav-menu { list-style: none; padding: 0; margin: 0; }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: var(--text-gray);
+      text-decoration: none;
+      padding: 12px 15px;
+      border-radius: 6px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      transition: all 0.2s;
+    }
+    .nav-link.active,
+    .nav-link:hover {
+      background-color: var(--brand-red);
+      color: #fff;
+    }
+    .nav-link i { width: 20px; text-align: center; }
+    .logout-section {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+    .logout-button {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 12px 15px;
+      border-radius: 6px;
+      color: var(--text-gray);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logout-button:hover {
+      background-color: #444;
+      color: #fff;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    h1 { margin: 0 0 8px 0; font-size: 2rem; }
+    .page-subtitle {
+      color: var(--text-gray);
+      margin-bottom: 25px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .toolbar input {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--text-white);
+      width: 80px;
+    }
+    .btn-small {
+      background: #444;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-small:hover {
+      background: var(--brand-red);
+    }
+
+    .table-card {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+    thead th {
+      background-color: #2a2a2a;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+    .empty-row {
+      text-align: center;
+      color: var(--text-gray);
+    }
+    .stock-low {
+      color: #ff6961;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">PULSE<span>.</span> PM</div>
+  <ul class="nav-menu">
+    <li><a href="/admin/dashboard" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+    <li><a href="/admin/products" class="nav-link"><i class="fas fa-tags"></i> Products</a></li>
+    <li><a href="/admin/inventory" class="nav-link active"><i class="fas fa-warehouse"></i> Inventory</a></li>
+  </ul>
+  <div class="logout-section">
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="main-content">
+  <h1>Inventory</h1>
+  <p class="page-subtitle">Monitor low stock variants and update quantities.</p>
+
+  <form class="toolbar" th:action="@{/admin/inventory}" method="get">
+    <span>Low stock threshold:</span>
+    <input type="number" name="threshold" min="0"
+           th:value="${threshold}">
+    <button type="submit" class="btn-small">
+      <i class="fas fa-filter"></i> Apply
+    </button>
+  </form>
+
+  <div class="table-card">
+    <table>
+      <thead>
+      <tr>
+        <th>Product</th>
+        <th>Variant</th>
+        <th>Color</th>
+        <th>Stock</th>
+        <th style="text-align:right;">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="v : ${lowStockVariants}">
+        <td th:text="${v.product != null ? v.product.name : '—'}">Product</td>
+        <td th:text="${v.variantType}">Type</td>
+        <td th:text="${v.color}">Color</td>
+        <td th:text="${v.stockQuantity}"
+            th:classappend="${v.stockQuantity != null and v.stockQuantity &lt; threshold} ? 'stock-low'">
+          0
+        </td>
+        <td style="text-align:right;">
+          <form th:action="@{'/admin/inventory/' + ${v.id} + '/stock'}"
+                method="post"
+                style="display:inline-flex; gap:6px; align-items:center;">
+            <input type="number" name="stock" min="0"
+                   th:value="${v.stockQuantity}">
+            <button type="submit" class="btn-small">
+              <i class="fas fa-save"></i> Update
+            </button>
+          </form>
+        </td>
+      </tr>
+
+      <tr th:if="${#lists.isEmpty(lowStockVariants)}">
+        <td colspan="5" class="empty-row">
+          No variants are below the current threshold.
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

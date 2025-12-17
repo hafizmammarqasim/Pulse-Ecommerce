@@ -92,6 +92,25 @@
         </div>
 
     </div>
+    <!-- Navbar Fragment -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- CATEGORY STRIP -->
+    <div style="background:#000; color:#fff; padding:10px 40px; display:flex; gap:25px;
+            font-weight:600; text-transform:uppercase; font-size:0.9rem;">
+        <a th:href="@{/}" style="color:#fff; text-decoration:none;">All</a>
+        <a th:href="@{/?category=earbuds}" style="color:#fff; text-decoration:none;">Earbuds</a>
+        <a th:href="@{/?category=headphones}" style="color:#fff; text-decoration:none;">Headphones</a>
+        <a th:href="@{/?category=speakers}" style="color:#fff; text-decoration:none;">Speakers</a>
+        <a th:href="@{/?category=watches}" style="color:#fff; text-decoration:none;">Watches</a>
+        <a th:href="@{/?category=powerbanks}" style="color:#fff; text-decoration:none;">Power Banks</a>
+    </div>
+
+    <div class="container">
+        <!-- your category sections here -->
+    </div>
+
+
 
 </nav>
 

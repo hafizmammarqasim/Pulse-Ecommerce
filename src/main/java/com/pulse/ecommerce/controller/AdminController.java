@@ -41,11 +41,10 @@ public class AdminController {
 
             // PRODUCT MANAGER
             if ("ROLE_PRODUCT_MANAGER".equals(role)) {
-                // Fetch stats...
-                 model.addAttribute("stats", adminService.getProductManagerStats());
+                model.addAttribute("stats", adminService.getProductManagerStats());
+                model.addAttribute("lowStockList", adminService.getLowStockVariantsForPM());
                 return "admin/product-manager-dashboard";
             }
-
             // ORDER MANAGER
             if ("ROLE_ORDER_MANAGER".equals(role)) {
                 Map<String, Long> stats = adminService.getOrderManagerStats();

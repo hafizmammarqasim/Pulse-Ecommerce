@@ -228,7 +228,17 @@
         <!-- LEFT: Image + Variants -->
         <div class="left-column">
             <div class="image-wrapper">
-                <img th:src="@{/images/tempImage.avif}" class="product-img" alt="Product Image">
+                <div class="image-wrapper">
+                    <img th:src="@{/images/tempImage.avif}" class="product-img" alt="Product Image">
+
+                </div>
+
+                <p>Variants: <span th:text="${#lists.size(product.variants)}">0</span></p>
+                <p th:if="${not #lists.isEmpty(product.variants)}">
+                    Images in first variant:
+                    <span th:text="${#lists.size(product.variants[0].images)}">0</span>
+                </p>
+
             </div>
 
             <div class="variant-section" th:if="${not #lists.isEmpty(product.variants)}">

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>PULSE.PM – Products</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+        --bg-black: #121212;
+        --bg-dark: #1e1e1e;
+        --brand-red: #cc0000;
+        --text-white: #ffffff;
+        --text-gray: #b3b3b3;
+        --border-color: #333;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: var(--bg-black);
+        color: var(--text-white);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        background-color: var(--bg-dark);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        flex-shrink: 0;
+    }
+    .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .logo span { color: var(--brand-red); }
+    .nav-menu { list-style: none; padding: 0; margin: 0; }
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: var(--text-gray);
+        text-decoration: none;
+        padding: 12px 15px;
+        border-radius: 6px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        transition: all 0.2s;
+    }
+    .nav-link.active,
+    .nav-link:hover {
+        background-color: var(--brand-red);
+        color: #fff;
+    }
+    .nav-link i {
+        width: 20px;
+        text-align: center;
+    }
+    .logout-section {
+        margin-top: auto;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+    .logout-button {
+        width: 100%;
+        background: none;
+        border: none;
+        text-align: left;
+        padding: 12px 15px;
+        border-radius: 6px;
+        color: var(--text-gray);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .logout-button:hover {
+        background-color: #444;
+        color: #fff;
+    }
+
+    /* Main content */
+    .main-content {
+        flex-grow: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
+    h1 { margin: 0 0 8px 0; font-size: 2rem; }
+    .page-subtitle {
+        color: var(--text-gray);
+        margin-bottom: 25px;
+    }
+
+    /* Filter + actions bar */
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 20px;
+    }
+    .toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .select,
+    .search-input {
+        background-color: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 8px 10px;
+        color: var(--text-white);
+        min-width: 160px;
+    }
+    .search-wrapper {
+        position: relative;
+    }
+    .search-input {
+        padding-left: 32px;
+    }
+    .search-wrapper i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-gray);
+        font-size: 0.85rem;
+    }
+    .btn-primary {
+        background-color: var(--brand-red);
+        border-radius: 6px;
+        padding: 10px 18px;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+    .btn-primary:hover {
+        background-color: #e00000;
+    }
+
+    /* Table */
+    .table-card {
+        background-color: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .dashboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .dashboard-table th {
+        text-align: left;
+        padding: 14px;
+        background-color: #2a2a2a;
+        color: var(--text-gray);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+    .dashboard-table td {
+        padding: 14px;
+        border-top: 1px solid var(--border-color);
+        font-size: 0.9rem;
+    }
+    .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .badge-trending { background-color: rgba(255, 215, 0, 0.1); color: #ffd700; }
+    .badge-bestseller { background-color: rgba(204, 0, 0, 0.15); color: var(--brand-red); }
+
+    .btn-small {
+        background: #444;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-small:hover {
+        background: var(--brand-red);
+    }
+    .danger {
+        background: #662222;
+    }
+    .danger:hover {
+        background: #cc0000;
+    }
+    .empty-row {
+        text-align: center;
+        color: var(--text-gray);
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">PULSE<span>.</span> PM</div>
+  <ul class="nav-menu">
+    <li><a href="/admin/dashboard" class="nav-link"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+    <li><a href="/admin/products" class="nav-link active"><i class="fas fa-tags"></i> Products</a></li>
+    <li><a href="/admin/inventory" class="nav-link"><i class="fas fa-warehouse"></i> Inventory</a></li>
+  </ul>
+  <div class="logout-section">
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="main-content">
+  <h1>Products</h1>
+  <p class="page-subtitle">Manage catalog, prices, and visibility.</p>
+
+  <!-- Filters + Add button -->
+  <form class="toolbar" th:action="@{/admin/products}" method="get">
+    <div class="toolbar-left">
+      <select class="select" name="category">
+        <option value=""
+                th:selected="${selectedCategory == null or selectedCategory == ''}">
+          All Categories
+        </option>
+        <option th:each="cat : ${categories}"
+                th:value="${cat.name}"
+                th:text="${cat.name}"
+                th:selected="${selectedCategory == cat.name}">
+        </option>
+      </select>
+
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input class="search-input"
+               type="text"
+               name="q"
+               placeholder="Search products by name..."
+               th:value="${query}">
+      </div>
+
+      <button type="submit" class="btn-small">
+        <i class="fas fa-filter"></i> Apply
+      </button>
+    </div>
+
+    <a th:href="@{/admin/products/new}" class="btn-primary">
+      <i class="fas fa-plus"></i> Add Product
+    </a>
+  </form>
+
+  <!-- Products table -->
+  <div class="table-card">
+    <table class="dashboard-table">
+      <thead>
+      <tr>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Variants</th>
+        <th>Status</th>
+        <th style="text-align:right;">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="prod : ${products}">
+        <td th:text="${prod.name}">Product name</td>
+        <td th:text="${prod.category != null ? prod.category.name : '—'}">Category</td>
+        <td th:text="${#numbers.formatDecimal(prod.price, 0, 'COMMA', 0, 'POINT')}">
+          0
+        </td>
+        <td th:text="${#lists.size(prod.variants)}">0</td>
+        <td>
+          <span th:if="${prod.trending}" class="badge badge-trending">Trending</span>
+          <span th:if="${prod.bestSeller}" class="badge badge-bestseller">Best Seller</span>
+        </td>
+        <td style="text-align:right;">
+          <a th:href="@{'/admin/products/' + ${prod.id} + '/edit'}"
+             class="btn-small">
+            <i class="fas fa-pen"></i> Edit
+          </a>
+
+          <form th:action="@{'/admin/products/' + ${prod.id} + '/delete'}"
+                method="post"
+                style="display:inline;"
+                onsubmit="return confirmDelete();">
+            <button type="submit"
+                    class="btn-small danger">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </form>
+
+        </td>
+      </tr>
+
+      <tr th:if="${#lists.isEmpty(products)}">
+        <td colspan="6" class="empty-row">
+          No products found for current filters.
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  function confirmDelete() {
+    const first = confirm("Are you sure you want to delete this product?");
+    if (!first) return false;
+    return confirm("This action is permanent. Delete this product and its variants?");
+  }
+</script>
+
+</body>
+</html>
