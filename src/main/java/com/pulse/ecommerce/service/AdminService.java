@@ -145,5 +145,10 @@ public class AdminService {
         return orderRepo.getVariantBreakdownForProductSQL(productName);
     }
 
+    public List<ProductVariant> getLowStockVariantsForPM() {
+        // threshold 10, same as in stats
+        return variantRepo.findByStockQuantityLessThan(10);
+    }
+
 
 }

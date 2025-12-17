@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | Pulse</title>
   <style>
-    /* --- PULSE RED/BLACK THEME --- */
     :root {
         --primary-black: #121212;
         --secondary-black: #1e1e1e;
@@ -15,14 +14,11 @@
         --border-color: #333;
         --input-bg: #2a2a2a;
     }
-
-    /* 1. RESET & BASE STYLES */
     * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
     }
-
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background-color: var(--primary-black);
@@ -30,76 +26,62 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh; /* Full screen height */
+        height: 100vh;
     }
-
-    /* 2. THE CARD CONTAINER */
     .login-container {
         background-color: var(--secondary-black);
-        padding: 3rem; /* 48px */
+        padding: 3rem;
         border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow for dark mode */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         border: 1px solid var(--border-color);
         width: 100%;
-        max-width: 400px;
+        /* ⭐️ THE FIX: Increased max-width for a wider form ⭐️ */
+        max-width: 450px;
         text-align: center;
     }
-
-    /* 3. TYPOGRAPHY UPDATES */
     .login-header {
-        margin-bottom: 2.5rem; /* More space between header and inputs */
+        margin-bottom: 2.5rem;
     }
-
     .brand-name {
-        font-size: 3rem; /* Made Logo slightly bigger */
+        font-size: 3rem;
         font-weight: 900;
         letter-spacing: 2px;
         text-transform: uppercase;
         color: var(--text-white);
         display: block;
-        margin-bottom: 10px; /* Space between Logo and Welcome text */
+        margin-bottom: 10px;
         line-height: 1;
     }
-
     .brand-name span {
         color: var(--primary-red);
     }
-
     .login-header p {
-        color: #cccccc; /* Much lighter gray, almost white */
-        font-size: 1.2rem; /* Increased size significantly */
-        font-weight: 500; /* Made it slightly thicker */
+        color: #cccccc;
+        font-size: 1.2rem;
+        font-weight: 500;
         letter-spacing: 0.5px;
     }
-
-    /* 4. FORM ELEMENTS */
     .form-group {
         margin-bottom: 1.5rem;
     }
-
     input {
         width: 100%;
         padding: 14px 15px;
         background-color: var(--input-bg);
         border: 1px solid var(--border-color);
         color: var(--text-white);
-        border-radius: 4px; /* Sharper corners match tech vibe */
+        border-radius: 4px;
         font-size: 1rem;
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
         outline: none;
     }
-
     input::placeholder {
         color: #666;
     }
-
-    /* Glow effect on focus (Red) */
     input:focus {
         border-color: var(--primary-red);
         box-shadow: 0 0 0 2px rgba(204, 0, 0, 0.2);
     }
-
-    /* 5. BUTTON */
     button {
         width: 100%;
         padding: 14px;
@@ -114,70 +96,78 @@
         transition: background-color 0.2s ease, transform 0.1s ease;
         margin-top: 10px;
     }
-
     button:hover {
-        background-color: #aa0000; /* Darker Red on hover */
+        background-color: #aa0000;
     }
-
     button:active {
         transform: scale(0.98);
     }
-
-        .footer-link {
-        margin-top: 30px; /* Pushes it further down from the button */
-        font-size: 1rem;  /* Increased from 0.9rem */
-        color: #999;      /* Lighter gray for better readability */
+    .footer-link {
+        margin-top: 30px;
+        font-size: 1rem;
+        color: #999;
     }
-
     .footer-link a {
         color: var(--primary-red);
         text-decoration: none;
-        font-weight: 700; /* Bold link to make it stand out */
-        margin-left: 5px; /* Tiny space after the question mark */
+        font-weight: 700;
+        margin-left: 5px;
         transition: color 0.2s;
     }
-
     .footer-link a:hover {
-        color: #ff4d4d; /* Brighter red on hover */
+        color: #ff4d4d;
         text-decoration: underline;
     }
-
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        font-weight: 600;
+        border: 1px solid transparent;
+        text-align: center;
+    }
+    .alert-error {
+        background-color: #5c0000;
+        border-color: var(--primary-red);
+        color: white;
+    }
+    .alert-success {
+        background-color: #0b4f32;
+        border-color: #28a745;
+        color: white;
+    }
+    .alert-logout {
+        background-color: #333;
+        border-color: #555;
+        color: var(--text-gray);
+    }
   </style>
 </head>
 <body>
 
 <div class="login-container">
-
   <div class="login-header">
     <div class="brand-name">Pulse<span>.</span></div>
     <p>Welcome back</p>
   </div>
 
-  <!-- ERROR MESSAGE BLOCK -->
   <div th:if="${param.error}" class="alert alert-error">
     Invalid username or password.
   </div>
-
-  <!-- LOGOUT MESSAGE BLOCK -->
   <div th:if="${param.logout}" class="alert alert-logout">
-    You have been logged out.
+    Logged out successfully.
   </div>
-
-  <!-- REGISTRATION SUCCESS BLOCK -->
   <div th:if="${param.registrationSuccess}" class="alert alert-success">
-    Account Created Successfully
+    Account created! Please log in.
   </div>
 
   <form th:action="@{/login}" method="post">
-
     <div class="form-group">
       <input type="text" name="username" placeholder="Email or Phone Number" required autofocus>
     </div>
-
     <div class="form-group">
       <input type="password" name="password" placeholder="Password" required>
     </div>
-
     <button type="submit">Sign In</button>
   </form>
 

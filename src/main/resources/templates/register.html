@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Pulse</title>
+    <title>Register | Pulse</title>
     <style>
+        /* --- ⭐️ STANDARD PULSE THEME (MATCHES LOGIN PAGE) ⭐️ --- */
+        :root {
+            --primary-black: #121212;
+            --secondary-black: #1e1e1e;
+            --primary-red: #cc0000;
+            --text-white: #ffffff;
+            --text-gray: #b3b3b3;
+            --border-color: #333;
+            --input-bg: #2a2a2a;
+        }
+
         /* 1. RESET & BASE STYLES */
         * {
             box-sizing: border-box;
@@ -14,166 +25,180 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background-color: var(--primary-black);
+            color: var(--text-white);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* min-height handles taller forms better */
-            padding: 20px; /* Prevents edges sticking on mobile */
+            min-height: 100vh;
+            padding: 20px;
         }
 
         /* 2. THE CARD CONTAINER */
-        .register-container {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        .form-container {
+            background-color: var(--secondary-black);
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
             width: 100%;
-            max-width: 450px; /* Slightly wider than login for the name fields */
+            max-width: 450px;
         }
 
         /* 3. TYPOGRAPHY */
         .header-section {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .brand-name {
-            color: #6c63ff;
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-white);
             display: block;
+            margin-bottom: 10px;
+        }
+
+        .brand-name span {
+            color: var(--primary-red);
         }
 
         .header-section p {
-            color: #666;
-            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-size: 1rem;
         }
 
         /* 4. FORM ELEMENTS */
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
+            text-align: left;
         }
-
-        /* Side-by-Side Names Grid */
         .name-row {
             display: flex;
-            gap: 10px;
+            gap: 15px;
         }
         .name-row .form-group {
-            flex: 1; /* Take equal width */
+            flex: 1;
         }
 
         label {
             display: block;
-            font-size: 0.85rem;
-            color: #333;
-            margin-bottom: 5px;
-            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-white);
+            border-radius: 4px;
+            font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             outline: none;
         }
 
         input:focus {
-            border-color: #6c63ff;
-            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 2px rgba(204, 0, 0, 0.2);
         }
 
         /* 5. BUTTON */
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #6c63ff;
+            padding: 14px;
+            background-color: var(--primary-red);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.1s ease;
             margin-top: 10px;
         }
 
         button:hover {
-            background-color: #5a52d5;
+            background-color: #aa0000;
         }
 
         button:active {
             transform: scale(0.98);
         }
 
-        /* 6. FOOTER */
+        /* 6. FOOTER & ALERTS */
         .footer-link {
             text-align: center;
             margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #666;
+            font-size: 1rem;
+            color: var(--text-gray);
         }
 
         .footer-link a {
-            color: #6c63ff;
+            color: var(--primary-red);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
         }
+
         .footer-link a:hover {
             text-decoration: underline;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            background-color: #5c0000;
+            border: 1px solid var(--primary-red);
+            color: white;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-
-<div class="register-container">
+<div class="form-container">
 
     <div class="header-section">
-        <span class="brand-name">Pulse.</span>
+        <span class="brand-name">PULSE<span>.</span></span>
         <p>Create your account to get started</p>
     </div>
 
-    <div th:if="${message}"
-         style="background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center;">
-        <span th:text="${message}"></span>
-    </div>
+    <!-- Themed error message display -->
+    <div th:if="${message}" class="alert" th:text="${message}"></div>
 
-    <!-- FORM START -->
-    <!-- th:object matches the "user" ModelAttribute you set in Controller -->
     <form th:action="@{/register}" th:object="${user}" method="post">
-
-        <!-- Row for First Name & Last Name -->
         <div class="name-row">
             <div class="form-group">
-                <label>First Name</label>
-                <input type="text" th:field="*{fName}" placeholder="Zadif" required>
+                <label for="fName">First Name</label>
+                <input type="text" id="fName" th:field="*{fName}" placeholder="John" required>
             </div>
             <div class="form-group">
-                <label>Last Name</label>
-                <input type="text" th:field="*{lName}" placeholder="Mustafa" required>
+                <label for="lName">Last Name</label>
+                <input type="text" id="lName" th:field="*{lName}" placeholder="Doe" required>
             </div>
         </div>
 
         <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" th:field="*{email}" placeholder="zadif@example.com" required>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" th:field="*{email}" placeholder="john.doe@example.com" required>
         </div>
 
         <div class="form-group">
-            <label>Phone Number</label>
-            <input type="text" th:field="*{phoneNumber}" placeholder="03001234567" required>
+            <label for="phoneNumber">Phone Number</label>
+            <input type="text" id="phoneNumber" th:field="*{phoneNumber}" placeholder="03001234567" required>
         </div>
 
         <div class="form-group">
-            <label>Password</label>
-            <input type="password" th:field="*{password}" placeholder="Create a password" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" th:field="*{password}" placeholder="Create a password" required>
         </div>
 
         <button type="submit">Create Account</button>

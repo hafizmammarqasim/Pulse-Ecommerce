@@ -11,14 +11,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler; // Import the interface
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final AuthService authService;
-    private final AuthenticationSuccessHandler authenticationSuccessHandler; // Use the interface
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Autowired
     public SecurityConfig(AuthService authService, AuthenticationSuccessHandler authenticationSuccessHandler) {
@@ -42,49 +42,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Okay for internal app, be aware for production
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
-
-                        // 1. ADMIN ROUTES: Secure all URLs starting with /admin/
-                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "ORDER_MANAGER", "PRODUCT_MANAGER", "SUPER_ADMIN")
-
-                        // 2. CUSTOMER AUTHENTICATED ROUTES: Require login for cart, orders, etc.
                         .requestMatchers(
-                                "/cart/**",
-                                "/order/**",
-                                "/support/**",
-                                "/checkout/**" // Add any other secure paths
-                        ).authenticated()
-
-                        // 3. PUBLIC ROUTES: Anyone can access these
-                        .requestMatchers(
-                                "/",
-                                "/home",
-                                "/login",
-                                "/register",
-                                "/search",
-                                "/product-details/**", // Allows viewing any product
-                                "/css/**",             // Allows CSS files
-                                "/js/**",              // Allows JavaScript files
-                                "/images/**"           // Allows image files
+                                // ⭐️ ADDED /access-denied to the public list
+                                "/", "/home", "/login", "/register", "/search", "/access-denied","/error",
+                                "/product-details/**", "/css/**", "/js/**", "/images/**"
                         ).permitAll()
-
-                        // 4. Fallback rule: any other URL that wasn't matched needs login
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "ORDER_MANAGER", "PRODUCT_MANAGER", "SUPER_ADMIN")
+                        .requestMatchers("/cart/**", "/order/**", "/support/**", "/checkout/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-
-                        // Use our custom handler to redirect based on role
                         .successHandler(authenticationSuccessHandler)
-
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
+                )
+                // ⭐️ ADDED THIS ENTIRE BLOCK TO HANDLE THE ERROR ⭐️
+                .exceptionHandling(exceptions ->
+                        exceptions.accessDeniedPage("/access-denied")
                 );
 
         return http.build();

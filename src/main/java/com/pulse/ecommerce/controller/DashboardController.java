@@ -19,15 +19,15 @@ public class DashboardController {
         this.dashboardService = dashboardService;
     }
 
-    @GetMapping("/")
-    public String home(Model model){
-        model.addAttribute("earbudsList",dashboardService.getEarbudsToDisplay());
-        model.addAttribute("headPhonesList",dashboardService.getHeadPhonesToDisplay());
-        model.addAttribute("speakersList",dashboardService.getSpeakersToDisplay());
-        model.addAttribute("powerBankList",dashboardService.getPowerBanksToDisplay());
-        model.addAttribute("watchList",dashboardService.getWatchesToDisplay());
-        return "home";
-    }
+//    @GetMapping("/")
+//    public String home(Model model){
+//        model.addAttribute("earbudsList",dashboardService.getEarbudsToDisplay());
+//        model.addAttribute("headPhonesList",dashboardService.getHeadPhonesToDisplay());
+//        model.addAttribute("speakersList",dashboardService.getSpeakersToDisplay());
+//        model.addAttribute("powerBankList",dashboardService.getPowerBanksToDisplay());
+//        model.addAttribute("watchList",dashboardService.getWatchesToDisplay());
+//        return "home";
+//    }
 
     @GetMapping("/search")
     public String searchItem(@RequestParam String query, Model model){
@@ -43,6 +43,7 @@ public class DashboardController {
         model.addAttribute("product",product);
         return "product-details.html";
     }
+
     @GetMapping("/")
     public String home(@RequestParam(value = "category", required = false) String category,
                        Model model) {
@@ -55,6 +56,13 @@ public class DashboardController {
 
         model.addAttribute("selectedCategory", category); // null means "All"
         return "home";
+    }
+
+    // In DashboardController.java or a new AuthController.java
+
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "access-denied";
     }
 
 

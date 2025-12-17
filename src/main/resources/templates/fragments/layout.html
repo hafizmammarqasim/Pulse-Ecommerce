@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
 <nav th:fragment="navbar" style="
@@ -51,30 +50,18 @@
     <!-- 3. RIGHT: NAVIGATION LINKS -->
     <div style="display: flex; gap: 25px; align-items: center;">
 
-        <!-- Static Links (Always Visible) -->
+        <!-- Static Links -->
         <a th:href="@{/}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Home</a>
-
         <a th:href="@{/cart/view}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">🛒</a>
-
         <a th:href="@{/order/view}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Orders</a>
-
         <a th:href="@{/support/my-tickets}" style="color: white; text-decoration: none; font-size: 1.1em; font-weight: 600;">Support</a>
-
-        <!-- AUTHENTICATION TOGGLE -->
 
         <!-- Case A: User is Logged In -> Show Logout -->
         <div sec:authorize="isAuthenticated()">
             <form th:action="@{/logout}" method="post" style="margin: 0;">
                 <button type="submit" style="
-                    background: none;
-                    border: none;
-                    color: #cc0000;
-                    font-size: 1.1em;
-                    font-weight: 700;
-                    cursor: pointer;
-                    padding: 0;
-                    text-decoration: none;
-                    font-family: inherit;">
+                    background: none; border: none; color: #cc0000; font-size: 1.1em;
+                    font-weight: 700; cursor: pointer; padding: 0; font-family: inherit;">
                     Logout
                 </button>
             </form>
@@ -83,35 +70,11 @@
         <!-- Case B: User is Anonymous -> Show Login -->
         <div sec:authorize="isAnonymous()">
             <a th:href="@{/login}" style="
-                color: #cc0000;
-                text-decoration: none;
-                font-size: 1.1em;
-                font-weight: 700;">
+                color: #cc0000; text-decoration: none; font-size: 1.1em; font-weight: 700;">
                 Login
             </a>
         </div>
-
     </div>
-    <!-- Navbar Fragment -->
-    <div th:replace="~{fragments/layout :: navbar}"></div>
-
-    <!-- CATEGORY STRIP -->
-    <div style="background:#000; color:#fff; padding:10px 40px; display:flex; gap:25px;
-            font-weight:600; text-transform:uppercase; font-size:0.9rem;">
-        <a th:href="@{/}" style="color:#fff; text-decoration:none;">All</a>
-        <a th:href="@{/?category=earbuds}" style="color:#fff; text-decoration:none;">Earbuds</a>
-        <a th:href="@{/?category=headphones}" style="color:#fff; text-decoration:none;">Headphones</a>
-        <a th:href="@{/?category=speakers}" style="color:#fff; text-decoration:none;">Speakers</a>
-        <a th:href="@{/?category=watches}" style="color:#fff; text-decoration:none;">Watches</a>
-        <a th:href="@{/?category=powerbanks}" style="color:#fff; text-decoration:none;">Power Banks</a>
-    </div>
-
-    <div class="container">
-        <!-- your category sections here -->
-    </div>
-
-
-
 </nav>
 
 </body>
