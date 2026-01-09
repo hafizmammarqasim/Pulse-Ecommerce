@@ -1,12 +1,17 @@
 package com.pulse.ecommerce.controller;
 
 import com.pulse.ecommerce.model.Cart;
+import com.pulse.ecommerce.model.CartItem;
 import com.pulse.ecommerce.model.UserRecord;
 import com.pulse.ecommerce.service.AuthService;
 import com.pulse.ecommerce.service.CartService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/cart")
@@ -62,6 +67,10 @@ public class CartController {
         UserRecord user = authService.getCurrentUser();
         if (user == null) return "redirect:/login";
         Cart cart = cartService.getActiveCart(user);
+        if(cart != null) {
+            BigDecimal totalPrice = cartService.calculateTotalPrice(cart);
+            model.addAttribute("totalPrice", totalPrice);
+        }
         model.addAttribute("cart", cart);
         return "cart";
     }

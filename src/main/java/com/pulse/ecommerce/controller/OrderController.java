@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,9 @@ public class OrderController {
         Delivery delivery = deliveryRepo.findById(deliveryId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid delivery ID"));
 
+        BigDecimal totalPrice = cartService.calculateTotalPrice(cart);
         model.addAttribute("cart", cart);
+        model.addAttribute("totalPrice",totalPrice);
         model.addAttribute("delivery", delivery);
         // default payment method COD for now
         model.addAttribute("paymentMethod", "COD");
@@ -87,24 +90,41 @@ public class OrderController {
             return "redirect:/cart/view";
         }
 
+        BigDecimal totalPrice = cartService.calculateTotalPrice(cart);
+        model.addAttribute("totalPrice",totalPrice);
         model.addAttribute("delivery", new Delivery());
         model.addAttribute("cart", cart);
         model.addAttribute("savedDeliveries", deliveryRepo.findByUser(user));
         return "delivery"; // your delivery HTML
     }
 
-    // STEP 2: handle delivery form submit
+    // STEP 2: Handle delivery form submit (UPDATED LOGIC)
     @PostMapping("/delivery")
-    public String handleDelivery(@ModelAttribute Delivery delivery) {
-        System.out.println("HIT /order/delivery POST");
+    public String handleDelivery(
+            @RequestParam("selectedDeliveryId") Long selectedDeliveryId, // The Switch
+            @ModelAttribute Delivery deliveryFormData, // The text inputs
+            Model model
+    ) {
         UserRecord user = authService.getCurrentUser();
         if (user == null) return "redirect:/login";
 
-        delivery.setUser(user);
-        Delivery saved = deliveryRepo.save(delivery);
+        Long finalDeliveryId;
 
-        // go to checkout with deliveryId
-        return "redirect:/order/checkout?deliveryId=" + saved.getId();
+        // --- THE LOGIC SWITCH ---
+        if (selectedDeliveryId == 0) {
+            // CASE 1: User selected "Add New Address"
+            // We must save the data from the text forms
+            deliveryFormData.setUser(user);
+            Delivery saved = deliveryRepo.save(deliveryFormData);
+            finalDeliveryId = saved.getId();
+        } else {
+            // CASE 2: User selected an Existing Card
+            // We ignore the text forms and just use the ID they picked
+            finalDeliveryId = selectedDeliveryId;
+        }
+
+        // Proceed to Checkout with the determined ID
+        return "redirect:/order/checkout?deliveryId=" + finalDeliveryId;
     }
 
     @GetMapping("/view")

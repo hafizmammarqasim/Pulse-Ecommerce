@@ -3,317 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <title>Delivery Details | Pulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* =========================================
+           1. GLOBAL & NAVBAR STYLES
+           ========================================= */
         :root {
-          --bg-black:#121212;
-          --bg-dark:#1e1e1e;
-          --card:#1b1b1b;
-          --border:#2b2b2b;
-          --brand-red:#cc0000;
-          --text-white:#ffffff;
-          --text-gray:#b3b3b3;
+            --bg-black: #121212; --bg-dark: #1e1e1e; --brand-red: #cc0000;
+            --text-white: #ffffff; --text-gray: #b3b3b3; --border-color: #333;
         }
-        *{box-sizing:border-box;}
-        body{
-          margin:0;
-          font-family:'Segoe UI',sans-serif;
-          background:#121212;
-          color:var(--text-white);
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--bg-black); color: var(--text-white);
+            overflow-x: hidden;
         }
-        .page{
-          max-width:1200px;
-          margin:80px auto 40px;
-          padding:0 20px 40px;
-          display:grid;
-          grid-template-columns:2fr 1.5fr;
-          gap:25px;
+
+        /* NAVBAR (Required for fragment styling) */
+        .navbar {
+            background-color: var(--bg-dark); color: var(--text-white);
+            padding: 15px 40px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 2px solid var(--border-color);
         }
-        .card{
-          background:var(--card);
-          border-radius:14px;
-          border:1px solid var(--border);
-          padding:20px 20px 25px;
-          box-shadow:0 20px 40px rgba(0,0,0,0.4);
-        }
-        h1,h2{margin:0 0 20px;}
-        label{
-          display:block;
-          font-size:0.8rem;
-          text-transform:uppercase;
-          color:var(--text-gray);
-          margin-bottom:4px;
-        }
-        input,textarea{
-          width:100%;
-          padding:10px;
-          margin-bottom:12px;
-          border-radius:8px;
-          border:1px solid var(--border);
-          background:#111;
-          color:#fff;
-          outline:none;
-        }
-        textarea{resize:vertical;min-height:70px;}
-        .row{display:flex;gap:12px;}
-        .btn-primary{
-          width:100%;
-          margin-top:10px;
-          padding:13px 0;
-          border-radius:999px;
-          border:none;
-          background:linear-gradient(135deg,#ffffff,#e3e3e3);
-          color:#000;
-          font-weight:700;
-          text-transform:uppercase;
-          letter-spacing:1px;
-          cursor:pointer;
-        }
-        .btn-primary:hover{filter:brightness(0.95);}
-        .summary-row{
-          display:flex;
-          justify-content:space-between;
-          margin-bottom:8px;
-          font-size:0.9rem;
-          color:var(--text-gray);
-        }
-        .summary-row.total{
-          margin-top:10px;
-          padding-top:10px;
-          border-top:1px dashed var(--border);
-          color:#fff;
-          font-weight:700;
-        }
-        .saved-address{
-          border:1px solid var(--border);
-          border-radius:10px;
-          padding:10px 12px;
-          margin-bottom:8px;
-          cursor:pointer;
-          background:#181818;
-          font-size:0.9rem;
-        }
-        .saved-address:hover{
-          border-color:var(--brand-red);
-        }
-        @media(max-width:900px){
-          .page{grid-template-columns:1fr;}
-        }
+        .navbar-logo { text-decoration: none; font-size: 1.8em; font-weight: 900; color: var(--text-white); text-transform: uppercase; letter-spacing: 1px; margin-right: 30px; }
+        .navbar-logo span { color: var(--brand-red); }
+        .navbar-search { display: flex; flex-grow: 1; max-width: 600px; background-color: #2a2a2a; border-radius: 6px; border: 1px solid var(--border-color); overflow: hidden; }
+        .navbar-search input { width: 100%; padding: 12px 15px; border: none; background: none; outline: none; color: var(--text-white); font-size: 1rem; }
+        .navbar-search button { background-color: var(--brand-red); color: white; border: none; padding: 0 20px; cursor: pointer; font-size: 1.1rem; }
+        .navbar-actions { display: flex; gap: 20px; align-items: center; margin-left: 30px; }
+        .nav-link { color: var(--text-gray); text-decoration: none; font-size: 1rem; font-weight: 600; padding: 8px 12px; border-radius: 4px; transition: 0.2s; }
+        .nav-link:hover { color: var(--text-white); background-color: #2a2a2a; }
+        .nav-link.icon { font-size: 1.3rem; }
+        .btn-logout { background: none; border: none; color: var(--text-gray); font-size: 1rem; font-weight: 600; cursor: pointer; padding: 8px 12px; font-family: inherit; }
+        .btn-logout:hover { color: var(--text-white); background-color: #2a2a2a; }
 
         /* =========================================
-       1. GLOBAL VARIABLES & RESET
-       ========================================= */
-    :root {
-        --bg-black: #121212;
-        --bg-dark: #1e1e1e;
-        --brand-red: #cc0000;
-        --text-white: #ffffff;
-        --text-gray: #b3b3b3;
-        --border-color: #333;
-    }
+           2. PAGE LAYOUT
+           ========================================= */
+        .container {
+            max-width: 1200px; margin: 50px auto; padding: 20px;
+            display: grid; grid-template-columns: 2fr 1fr; gap: 40px;
+        }
 
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: var(--bg-black);
-        color: var(--text-white);
-        overflow-x: hidden;
-    }
+        h2 { border-left: 5px solid var(--brand-red); padding-left: 15px; margin-bottom: 30px; margin-top: 0; }
 
-    /* =========================================
-       2. NAVBAR STYLES (REQUIRED FOR FRAGMENT)
-       ========================================= */
-    .navbar {
-        background-color: var(--bg-dark);
-        color: var(--text-white);
-        padding: 15px 40px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 2px solid var(--border-color);
-    }
+        /* =========================================
+           3. ADDRESS CARDS (Selection UI)
+           ========================================= */
+        .address-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px; margin-bottom: 30px;
+        }
+        .address-option input[type="radio"] { display: none; } /* Hide radio circle */
 
-    /* Logo */
-    .navbar-logo {
-        text-decoration: none;
-        font-size: 1.8em;
-        font-weight: 900;
-        color: var(--text-white);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-right: 30px;
-    }
-    .navbar-logo span { color: var(--brand-red); }
+        .address-card {
+            background-color: var(--bg-dark); border: 2px solid var(--border-color);
+            border-radius: 8px; padding: 20px; cursor: pointer; transition: 0.2s;
+            position: relative; min-height: 120px; display: flex; flex-direction: column; justify-content: center;
+        }
+        .address-card:hover { border-color: #666; }
 
-    /* Search Bar */
-    .navbar-search {
-        display: flex;
-        flex-grow: 1;
-        max-width: 600px;
-        background-color: #2a2a2a;
-        border-radius: 6px;
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-        transition: border-color 0.2s;
-    }
-    .navbar-search:focus-within { border-color: var(--brand-red); }
-    .navbar-search input {
-        width: 100%;
-        padding: 12px 15px;
-        border: none;
-        background: none;
-        outline: none;
-        color: var(--text-white);
-        font-size: 1rem;
-    }
-    .navbar-search button {
-        background-color: var(--brand-red);
-        color: white;
-        border: none;
-        padding: 0 20px;
-        cursor: pointer;
-        font-size: 1.1rem;
-        transition: background-color 0.2s;
-    }
-    .navbar-search button:hover { background-color: #aa0000; }
+        /* Selected State */
+        .address-option input[type="radio"]:checked + .address-card {
+            border-color: var(--brand-red); background-color: rgba(204, 0, 0, 0.05);
+        }
+        .check-icon { position: absolute; top: 10px; right: 10px; color: var(--brand-red); opacity: 0; transition: 0.2s; }
+        .address-option input[type="radio"]:checked + .address-card .check-icon { opacity: 1; }
 
-    /* Links & Actions */
-    .navbar-actions {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-        margin-left: 30px;
-    }
-    .nav-link {
-        color: var(--text-gray);
-        text-decoration: none;
-        font-size: 1rem;
-        font-weight: 600;
-        padding: 8px 12px;
-        border-radius: 4px;
-        transition: color 0.2s, background-color 0.2s;
-    }
-    .nav-link:hover {
-        color: var(--text-white);
-        background-color: #2a2a2a;
-    }
-    .nav-link.icon { font-size: 1.3rem; }
+        .addr-name { font-weight: 800; font-size: 1.1rem; margin-bottom: 5px; display: block; color: white;}
+        .addr-text { font-size: 0.9rem; color: var(--text-gray); line-height: 1.4; }
 
-    /* Auth Buttons */
-    .btn-login {
-        background-color: var(--brand-red);
-        color: var(--text-white);
-        text-decoration: none;
-        font-size: 1rem;
-        font-weight: 700;
-        padding: 8px 16px;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-    }
-    .btn-login:hover { background-color: #aa0000; }
+        .address-card.new { align-items: center; border-style: dashed; color: var(--brand-red); font-weight: 700; text-transform: uppercase; }
 
-    .btn-logout {
-        background: none;
-        border: none;
-        color: var(--text-gray);
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        padding: 8px 12px;
-        font-family: inherit;
-        border-radius: 4px;
-        transition: color 0.2s, background-color 0.2s;
-    }
-    .btn-logout:hover {
-        color: var(--text-white);
-        background-color: #2a2a2a;
-    }
+        /* =========================================
+           4. FORM STYLES
+           ========================================= */
+        #new-address-form {
+            display: none; /* JS toggles this */
+            background: var(--bg-dark); padding: 30px; border-radius: 8px; border: 1px solid var(--border-color);
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        label { display: block; font-size: 0.8rem; text-transform: uppercase; color: var(--text-gray); margin-bottom: 4px; margin-top: 15px;}
+        input, textarea, select {
+            width: 100%; padding: 12px; margin-bottom: 5px; border-radius: 8px;
+            border: 1px solid var(--border-color); background: #2a2a2a; color: #fff; outline: none;
+        }
+        input:focus, textarea:focus { border-color: var(--brand-red); }
+        textarea { resize: vertical; min-height: 70px; }
+
+        .row { display: flex; gap: 12px; }
+
+        /* =========================================
+           5. SUMMARY & BUTTONS
+           ========================================= */
+        .summary-card { background-color: var(--bg-dark); padding: 30px; border-radius: 8px; border: 1px solid var(--border-color); position: sticky; top: 20px; }
+        .summary-title { text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; margin-top: 0; font-weight: 700; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-gray); font-size: 0.9rem; }
+
+        .total-row { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #444; font-size: 1.5rem; font-weight: 800; color: white; }
+
+        .btn-confirm {
+            width: 100%; background: var(--brand-red); color: white; padding: 15px; border: none;
+            border-radius: 6px; font-weight: 800; text-transform: uppercase; margin-top: 25px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-confirm:hover { background: #aa0000; }
+
     </style>
 </head>
 <body>
 
 <div th:replace="~{fragments/layout :: navbar}"></div>
 
-<div class="page">
+<div class="container">
 
-    <!-- LEFT: Delivery form -->
-    <div class="card">
-        <h1>Delivery Details</h1>
+    <!-- LEFT: SELECTION & FORM -->
+    <div class="checkout-left">
+        <h2>Select Delivery Address</h2>
 
-        <!-- Saved addresses -->
-        <div th:if="${savedDeliveries != null and !#lists.isEmpty(savedDeliveries)}">
-            <h3 style="margin-top:0; margin-bottom:10px; font-size:1rem; color:var(--text-gray);">
-                Saved Addresses
-            </h3>
-            <div th:each="d : ${savedDeliveries}" class="saved-address">
-                <div th:text="${d.firstName} + ' ' + ${d.lastName}">Name</div>
-                <div th:text="${d.addressLine} + ', ' + ${d.city}">Address</div>
-                <div th:text="${d.phone}">Phone</div>
-            </div>
-            <hr style="border:0;border-top:1px solid var(--border);margin:15px 0;">
-        </div>
+        <!-- MAIN FORM -->
+        <form id="deliveryForm" th:action="@{/order/delivery}" method="post" th:object="${delivery}">
 
-        <form th:action="@{/order/delivery}" method="post" th:object="${delivery}">
-            <div class="row">
-                <div style="flex:1;">
-                    <label>First Name</label>
-                    <input th:field="*{firstName}" required>
-                </div>
-                <div style="flex:1;">
-                    <label>Last Name</label>
-                    <input th:field="*{lastName}" required>
-                </div>
-            </div>
+            <!-- 1. ADDRESS CARDS -->
+            <div class="address-grid">
 
-            <label>Phone</label>
-            <input th:field="*{phone}" required>
+                <!-- LOOP Existing Addresses -->
+                <label class="address-option" th:each="addr, iterStat : ${savedDeliveries}">
+                    <input type="radio" name="selectedDeliveryId"
+                           th:value="${addr.id}"
+                           onclick="toggleForm(false)"
+                           th:checked="${iterStat.index == 0}">
 
-            <label>Country</label>
-            <input th:field="*{country}" value="Pakistan" required>
+                    <div class="address-card">
+                        <i class="fas fa-check-circle check-icon"></i>
+                        <span class="addr-name" th:text="${addr.firstName} + ' ' + ${addr.lastName}">Name</span>
+                        <div class="addr-text">
+                            <span th:text="${addr.addressLine}">Address</span>,
+                            <span th:text="${addr.city}">City</span>
+                            <br><span th:text="${addr.phone}">Phone</span>
+                        </div>
+                    </div>
+                </label>
 
-            <label>Address Line</label>
-            <textarea th:field="*{addressLine}" required></textarea>
+                <!-- ADD NEW Option -->
+                <label class="address-option">
+                    <input type="radio" name="selectedDeliveryId" value="0"
+                           onclick="toggleForm(true)"
+                           th:checked="${#lists.isEmpty(savedDeliveries)}">
 
-            <label>Apartment (optional)</label>
-            <input th:field="*{apartment}">
-
-            <div class="row">
-                <div style="flex:1;">
-                    <label>City</label>
-                    <input th:field="*{city}" required>
-                </div>
-                <div style="flex:1;">
-                    <label>Postal Code</label>
-                    <input th:field="*{postalCode}">
-                </div>
+                    <div class="address-card new">
+                        <i class="fas fa-plus-circle" style="font-size: 1.5rem; margin-bottom: 10px;"></i>
+                        Add New Address
+                    </div>
+                </label>
             </div>
 
-            <button type="submit" class="btn-primary">Continue to Checkout</button>
+            <!-- 2. NEW ADDRESS INPUTS -->
+            <div id="new-address-form">
+                <h3 style="margin-top:0; margin-bottom:20px; color:white;">New Shipping Details</h3>
+
+                <div class="row">
+                    <div style="flex:1;">
+                        <label>First Name</label>
+                        <input type="text" th:field="*{firstName}" placeholder="First Name">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Last Name</label>
+                        <input type="text" th:field="*{lastName}" placeholder="Last Name">
+                    </div>
+                </div>
+
+                <label>Phone</label>
+                <input type="text" th:field="*{phone}" placeholder="0300-1234567">
+
+                <label>Country</label>
+                <input type="text" th:field="*{country}" value="Pakistan">
+
+                <label>Address Line</label>
+                <textarea th:field="*{addressLine}" placeholder="House #, Street, Area"></textarea>
+
+                <label>Apartment (optional)</label>
+                <input type="text" th:field="*{apartment}" placeholder="Apartment, Suite, etc.">
+
+                <div class="row">
+                    <div style="flex:1;">
+                        <label>City</label>
+                        <input type="text" th:field="*{city}" placeholder="City">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Postal Code</label>
+                        <input type="text" th:field="*{postalCode}" placeholder="Postal Code">
+                    </div>
+                </div>
+            </div>
+
         </form>
     </div>
 
-    <!-- RIGHT: Order summary from cart -->
-    <div class="card" th:if="${cart != null}">
-        <h2>Order Summary</h2>
+    <!-- RIGHT: ORDER SUMMARY -->
+    <div class="summary-card" th:if="${cart != null}">
+        <div class="summary-title">Order Summary</div>
 
         <div th:each="item : ${cart.cartItems}" class="summary-row">
-            <span th:text="${item.variant.product.name} + ' x ' + ${item.quantity}">Item</span>
-            <span th:text="'Rs. ' + ${item.variant.product.price * item.quantity}">0</span>
+            <span th:text="${item.variant.product.name} + ' (x' + ${item.quantity} + ')'">Product</span>
+            <!-- FIXED Price Calculation -->
+            <span th:text="'Rs. ' + ${item.variant.product.price * item.quantity}">Rs. 0</span>
         </div>
 
-        <div th:with="total=0">
-            <div th:each="item : ${cart.cartItems}"
-                 th:with="line=${item.variant.product.price * item.quantity},
-                    total=${total + line}">
-            </div>
-            <div class="summary-row total">
-                <span>Total</span>
-                <span th:text="'Rs. ' + ${total}">0</span>
-            </div>
+        <div class="total-row">
+            <span>Total</span>
+            <span style="color: var(--brand-red);" th:text="'Rs. ' + ${totalPrice}">Rs. 0</span>
         </div>
+
+        <button class="btn-confirm" onclick="document.getElementById('deliveryForm').submit()">
+            Continue to Checkout
+        </button>
     </div>
 
 </div>
+
+<!-- JAVASCRIPT LOGIC -->
+<script>
+    function toggleForm(show) {
+        const formDiv = document.getElementById('new-address-form');
+        const inputs = formDiv.querySelectorAll('input, textarea');
+
+        if (show) {
+            formDiv.style.display = 'block';
+            inputs.forEach(i => {
+                // Only require if it's NOT apartment
+                if(i.name !== 'apartment') i.required = true;
+                i.disabled = false;
+            });
+        } else {
+            formDiv.style.display = 'none';
+            inputs.forEach(i => { i.disabled = true; i.required = false; });
+        }
+    }
+
+    // Run on load to handle initial state
+    window.onload = function() {
+        const newAddrRadio = document.querySelector('input[value="0"]');
+        if (newAddrRadio && newAddrRadio.checked) {
+            toggleForm(true);
+        } else {
+            toggleForm(false);
+        }
+    };
+</script>
 
 </body>
 </html>

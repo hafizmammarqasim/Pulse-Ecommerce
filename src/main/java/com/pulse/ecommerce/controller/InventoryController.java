@@ -43,4 +43,6 @@ public class InventoryController {
         }
         return "redirect:/admin/inventory";
     }
+
+    
 }

@@ -10,7 +10,9 @@ import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CartService {
@@ -111,4 +113,15 @@ public class CartService {
                 .orElse(null);   // null = no cart yet
     }
 
+    public BigDecimal calculateTotalPrice(Cart cart){
+        List<CartItem> cartItems = cart.getCartItems();
+        BigDecimal grandTotal = BigDecimal.ZERO;
+        for (CartItem item:cartItems){
+            //calculate sum using big decimal
+            grandTotal = grandTotal.add(
+                    (item.getVariant().getProduct().getPrice())
+                            .multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+        return grandTotal;
+    }
 }

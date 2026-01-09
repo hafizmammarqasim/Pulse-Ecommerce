@@ -264,16 +264,11 @@
             <span th:text="'Rs. ' + ${item.variant.product.price * item.quantity}">0</span>
         </div>
 
-        <div th:with="total=0">
-            <div th:each="item : ${cart.cartItems}"
-                 th:with="line=${item.variant.product.price * item.quantity},
-                    total=${total + line}">
-            </div>
-            <div class="summary-row total">
-                <span>Total</span>
-                <span th:text="'Rs. ' + ${total}">0</span>
-            </div>
+        <div class="summary-row total">
+            <span>Total</span>
+            <span th:text="'Rs. ' + ${totalPrice}">0</span>
         </div>
+
     </div>
 
 </div>
